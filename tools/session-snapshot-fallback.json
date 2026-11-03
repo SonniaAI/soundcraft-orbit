@@ -1,0 +1,404 @@
+{
+  "bit_depth": "Int24",
+  "busses": [],
+  "dirty": false,
+  "edit_mode": "Slip",
+  "frame_rate": "30",
+  "grid": "1/16 note",
+  "groups": [],
+  "length_samples": 768000,
+  "main_format": "Stereo",
+  "markers": [],
+  "meter": [
+    {
+      "denominator": 4,
+      "numerator": 4,
+      "tick": 0
+    }
+  ],
+  "name": "first-light",
+  "nudge": "1.000 sec",
+  "path": "first-light.scraft",
+  "redo": null,
+  "sample_rate": 48000,
+  "selection": {
+    "clips": [],
+    "end": 0,
+    "start": 0,
+    "tracks": []
+  },
+  "sources": [
+    {
+      "channels": 1,
+      "frames": 768000,
+      "id": 1,
+      "loaded": true,
+      "name": "kick",
+      "path": "Audio Files/kick.wav"
+    },
+    {
+      "channels": 1,
+      "frames": 768000,
+      "id": 4,
+      "loaded": true,
+      "name": "snare",
+      "path": "Audio Files/snare.wav"
+    },
+    {
+      "channels": 1,
+      "frames": 768000,
+      "id": 7,
+      "loaded": true,
+      "name": "hats",
+      "path": "Audio Files/hats.wav"
+    },
+    {
+      "channels": 1,
+      "frames": 768000,
+      "id": 10,
+      "loaded": true,
+      "name": "bass",
+      "path": "Audio Files/bass.wav"
+    },
+    {
+      "channels": 1,
+      "frames": 768000,
+      "id": 13,
+      "loaded": true,
+      "name": "keys",
+      "path": "Audio Files/keys.wav"
+    },
+    {
+      "channels": 1,
+      "frames": 384000,
+      "id": 16,
+      "loaded": true,
+      "name": "lead2",
+      "path": "Audio Files/lead2.wav"
+    }
+  ],
+  "tempo": [
+    {
+      "bpm": 120.0,
+      "tick": 0
+    }
+  ],
+  "tool": "Smart",
+  "tracks": [
+    {
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "end": 768000,
+          "fade_in": 0,
+          "fade_out": 0,
+          "gain_db": 0.0,
+          "id": 3,
+          "length": 768000,
+          "locked": false,
+          "muted": false,
+          "name": "kick",
+          "offset": 0,
+          "source": 1,
+          "start": 0,
+          "start_time": "0:00.000"
+        }
+      ],
+      "format": "Mono",
+      "height": "medium",
+      "hidden": false,
+      "id": 2,
+      "inactive": false,
+      "input": "None",
+      "inserts": [
+        {
+          "bypass": false,
+          "format": "builtin",
+          "params": null,
+          "plugin": "compressor",
+          "slot": 0
+        }
+      ],
+      "kind": "audio",
+      "mute": false,
+      "name": "Kick",
+      "output": "Main",
+      "pan": [
+        0.0
+      ],
+      "playlist": "kick",
+      "playlists": 1,
+      "record_arm": false,
+      "sends": [],
+      "solo": false,
+      "surround": null,
+      "view": "waveform",
+      "volume_db": -1.0
+    },
+    {
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "end": 768000,
+          "fade_in": 0,
+          "fade_out": 0,
+          "gain_db": 0.0,
+          "id": 6,
+          "length": 768000,
+          "locked": false,
+          "muted": false,
+          "name": "snare",
+          "offset": 0,
+          "source": 4,
+          "start": 0,
+          "start_time": "0:00.000"
+        }
+      ],
+      "format": "Mono",
+      "height": "medium",
+      "hidden": false,
+      "id": 5,
+      "inactive": false,
+      "input": "None",
+      "inserts": [
+        {
+          "bypass": false,
+          "format": "builtin",
+          "params": null,
+          "plugin": "eq_7band",
+          "slot": 0
+        }
+      ],
+      "kind": "audio",
+      "mute": false,
+      "name": "Snare",
+      "output": "Main",
+      "pan": [
+        0.0
+      ],
+      "playlist": "snare",
+      "playlists": 1,
+      "record_arm": false,
+      "sends": [],
+      "solo": false,
+      "surround": null,
+      "view": "waveform",
+      "volume_db": -3.0
+    },
+    {
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "end": 768000,
+          "fade_in": 0,
+          "fade_out": 0,
+          "gain_db": 0.0,
+          "id": 9,
+          "length": 768000,
+          "locked": false,
+          "muted": false,
+          "name": "hats",
+          "offset": 0,
+          "source": 7,
+          "start": 0,
+          "start_time": "0:00.000"
+        }
+      ],
+      "format": "Mono",
+      "height": "medium",
+      "hidden": false,
+      "id": 8,
+      "inactive": false,
+      "input": "None",
+      "inserts": [],
+      "kind": "audio",
+      "mute": false,
+      "name": "Hats",
+      "output": "Main",
+      "pan": [
+        0.0
+      ],
+      "playlist": "hats",
+      "playlists": 1,
+      "record_arm": false,
+      "sends": [],
+      "solo": false,
+      "surround": null,
+      "view": "waveform",
+      "volume_db": -9.0
+    },
+    {
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "end": 768000,
+          "fade_in": 0,
+          "fade_out": 0,
+          "gain_db": 0.0,
+          "id": 12,
+          "length": 768000,
+          "locked": false,
+          "muted": false,
+          "name": "bass",
+          "offset": 0,
+          "source": 10,
+          "start": 0,
+          "start_time": "0:00.000"
+        }
+      ],
+      "format": "Mono",
+      "height": "medium",
+      "hidden": false,
+      "id": 11,
+      "inactive": false,
+      "input": "None",
+      "inserts": [
+        {
+          "bypass": false,
+          "format": "builtin",
+          "params": null,
+          "plugin": "saturator",
+          "slot": 0
+        }
+      ],
+      "kind": "audio",
+      "mute": false,
+      "name": "Bass",
+      "output": "Main",
+      "pan": [
+        0.0
+      ],
+      "playlist": "bass",
+      "playlists": 1,
+      "record_arm": false,
+      "sends": [],
+      "solo": false,
+      "surround": null,
+      "view": "waveform",
+      "volume_db": -4.0
+    },
+    {
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "end": 768000,
+          "fade_in": 0,
+          "fade_out": 0,
+          "gain_db": 0.0,
+          "id": 15,
+          "length": 768000,
+          "locked": false,
+          "muted": false,
+          "name": "keys",
+          "offset": 0,
+          "source": 13,
+          "start": 0,
+          "start_time": "0:00.000"
+        }
+      ],
+      "format": "Mono",
+      "height": "medium",
+      "hidden": false,
+      "id": 14,
+      "inactive": false,
+      "input": "None",
+      "inserts": [
+        {
+          "bypass": false,
+          "format": "builtin",
+          "params": null,
+          "plugin": "plate_reverb",
+          "slot": 0
+        }
+      ],
+      "kind": "audio",
+      "mute": false,
+      "name": "Keys",
+      "output": "Main",
+      "pan": [
+        0.0
+      ],
+      "playlist": "keys",
+      "playlists": 1,
+      "record_arm": false,
+      "sends": [],
+      "solo": false,
+      "surround": null,
+      "view": "waveform",
+      "volume_db": -7.0
+    },
+    {
+      "automation": [],
+      "automation_mode": "read",
+      "clips": [
+        {
+          "end": 768000,
+          "fade_in": 0,
+          "fade_out": 0,
+          "gain_db": 0.0,
+          "id": 18,
+          "length": 384000,
+          "locked": false,
+          "muted": false,
+          "name": "lead2",
+          "offset": 0,
+          "source": 16,
+          "start": 384000,
+          "start_time": "0:08.000"
+        }
+      ],
+      "format": "Mono",
+      "height": "medium",
+      "hidden": false,
+      "id": 17,
+      "inactive": false,
+      "input": "None",
+      "inserts": [
+        {
+          "bypass": false,
+          "format": "builtin",
+          "params": null,
+          "plugin": "plate_reverb",
+          "slot": 0
+        },
+        {
+          "bypass": false,
+          "format": "builtin",
+          "params": null,
+          "plugin": "chorus",
+          "slot": 1
+        }
+      ],
+      "kind": "audio",
+      "mute": false,
+      "name": "Lead",
+      "output": "Main",
+      "pan": [
+        0.0
+      ],
+      "playlist": "lead2",
+      "playlists": 1,
+      "record_arm": false,
+      "sends": [],
+      "solo": false,
+      "surround": null,
+      "view": "waveform",
+      "volume_db": -9.0
+    }
+  ],
+  "transport": {
+    "playing": false,
+    "position": 0,
+    "recording": false
+  },
+  "undo": "Insert Plugin",
+  "zoom": {
+    "samples_per_px": 1024.0,
+    "scroll": 0
+  }
+}

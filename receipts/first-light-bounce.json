@@ -1,0 +1,12 @@
+{
+  "session": "first-light",
+  "tool": "soundcraft-cli 0.14.0 (linux aarch64)",
+  "command": "soundcraft-cli script build-session.scmd --save first-light.scraft --bounce first-light-mix.wav --inspect",
+  "capturedAt": "2026-11-03T00:48:50Z",
+  "bytes": 4608104,
+  "lufs": -16.291418075561523,
+  "path": "first-light-mix.wav",
+  "peak_db": -1.4417438507080078,
+  "seconds": 16.0,
+  "true_peak_db": -1.2657890319824219
+}
