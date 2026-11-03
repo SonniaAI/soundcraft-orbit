@@ -435,7 +435,16 @@ function applyData(d) {
     `data: ${DATA.inspectSource} · receipt: ${DATA.provenance.receiptTool || "?"} · generated ${DATA.generatedAt} · session file ${s.sessionFile}`;
   if (!lastGeneratedAt || lastGeneratedAt !== d.generatedAt) {
     lastGeneratedAt = d.generatedAt;
-    if (audio) { audio.src = DATA.mixAudio; }
+    if (audio) {                       // new take landed: swap the mix, keep playing
+      const resume = playing && !audio.paused;
+      audio.src = DATA.mixAudio;
+      if (resume) audio.play();
+    }
+    if (bridgeLive) {                  // visible proof of a live sync
+      const badge = document.getElementById("modeBadge");
+      badge.textContent = "LIVE · SYNCED " + new Date().toTimeString().slice(0, 8);
+      setTimeout(() => { badge.textContent = "LIVE · BRIDGE"; }, 4000);
+    }
   }
 }
 

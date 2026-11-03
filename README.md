@@ -51,6 +51,22 @@ Live bridge (re-inspects the session on change; page polls every 4 s):
 python3 tools/serve.py --port 8760      # → http://localhost:8760  (LIVE · BRIDGE badge)
 ```
 
+Watch a real change land end to end (Orbit v2):
+
+```bash
+python3 tools/live_change.py            # engine edit + bounce + receipt; page updates in ~4 s
+python3 tools/live_change.py --restore  # back to the committed first-light state
+```
+
+`live_change.py` edits the real session through soundcraft-cli (the Lead drops
+out of bar 8, Lead/Bass rebalanced), bounces the new mix and stores the
+verbatim engine receipt as `receipts/first-light-live.json`. The bridge
+notices, rebuilds, and the page re-renders: ring bar 8 dims from 6/6 to 5/6,
+the Lead card's mini-grid loses its last cell, the volume ticks move and the
+bounce plaque shows the fresh receipt (−16.3 → −14.8 LUFS, "just now").
+Captured evidence: `docs/evidence/live-bridge-before.png` / `-after.png`, with
+reproduction receipts in `docs/evidence/README.md`.
+
 Controls: **FOV** toggles the Spectacles 51°×30° frame at 1.5 m (everything
 outside is dimmed — that is what the glasses would not render), **RULER** shows
 the angular scale, **PLAY** plays the actual bounced mix while the ring
@@ -76,9 +92,11 @@ python3 tools/build_data.py
 
 ```text
 docs/AR-INFORMATION-ARCHITECTURE.md   deliverable (a) — the IA
+docs/evidence/                        screenshots + reproduction receipts (see README there)
+docs/devpost/                         submission pack: DEVPOST.md, DEMO-SCRIPT.md, CHECKLIST.md
 web/                                  deliverable (b) — companion (vanilla JS, no build step)
 lens/                                 deliverable (c) — Lens Studio scripts + manifest + setup
-tools/                                deliverable (d) — stems, session build, data bridge
+tools/                                deliverable (d) — stems, session build, data bridge, live change
 session/                              the real SoundCraft session bundle (.scraft + Audio Files)
 receipts/                             engine bounce receipts (verbatim)
 web/data/session.json                 generated artifact — soundcraft-orbit/session@1

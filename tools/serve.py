@@ -13,14 +13,35 @@ The page polls /api/session every 4 s in bridge mode, so edits to the session
 
 Usage:  python3 tools/serve.py [--repo DIR] [--port 8760]
 """
-import argparse, json, os, subprocess, sys, threading, time
+import argparse, glob, json, os, subprocess, sys, threading, time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(REPO, "web")
 LOCK = threading.Lock()
-CACHE = {"mtime": None, "json": None}
+CACHE = {"stamp": None, "json": None}
+
+
+def watch_stamp():
+    """Composite mtime stamp of everything the bridge data depends on:
+    the session bundle, any bounce receipt, and the playable mix."""
+    times = []
+    for pattern in (os.path.join(REPO, "session", "*.scraft"),
+                    os.path.join(REPO, "receipts", "*.json"),
+                    os.path.join(REPO, "web", "data", "first-light-mix.wav")):
+        for p in glob.glob(pattern):
+            try:
+                times.append(os.path.getmtime(p))
+            except OSError:
+                pass
+    return max(times) if times else None
+
+
+def latest_receipt():
+    receipts = sorted(glob.glob(os.path.join(REPO, "receipts", "*.json")),
+                      key=os.path.getmtime)
+    return receipts[-1] if receipts else None
 
 
 def rebuild_if_stale():
@@ -30,20 +51,21 @@ def rebuild_if_stale():
     )
     if not scrafts:
         return None
-    scraft = scrafts[0]
-    mtime = os.path.getmtime(scraft)
+    stamp = watch_stamp()
     with LOCK:
-        if CACHE["json"] is not None and CACHE["mtime"] == mtime:
+        if CACHE["json"] is not None and CACHE["stamp"] == stamp:
             return CACHE["json"]
-        r = subprocess.run(
-            [sys.executable, os.path.join(REPO, "tools", "build_data.py")],
-            cwd=REPO, capture_output=True, text=True, timeout=120)
+        cmd = [sys.executable, os.path.join(REPO, "tools", "build_data.py")]
+        receipt = latest_receipt()
+        if receipt:
+            cmd += ["--receipt", receipt]
+        r = subprocess.run(cmd, cwd=REPO, capture_output=True, text=True, timeout=120)
         if r.returncode != 0:
             sys.stderr.write(r.stderr)
             return CACHE["json"]
         with open(os.path.join(REPO, "web", "data", "session.json")) as f:
             CACHE["json"] = json.load(f)
-        CACHE["mtime"] = mtime
+        CACHE["stamp"] = stamp
         print(f"[bridge] rebuilt session data at {datetime.now(timezone.utc).isoformat()}")
         return CACHE["json"]
 
@@ -71,11 +93,14 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?", 1)[0]
         if path == "/api/bridge-info":
+            receipt = latest_receipt()
             body = json.dumps({
                 "bridge": True,
                 "sessionFile": "session/first-light.scraft",
                 "cli": cli_version(),
-                "note": "read-only re-inspect on .scraft change; page polls /api/session",
+                "receipt": os.path.relpath(receipt, REPO) if receipt else None,
+                "watches": ["session/*.scraft", "receipts/*.json", "web/data/first-light-mix.wav"],
+                "note": "read-only rebuild when the session bundle, a bounce receipt or the mix changes; page polls /api/session",
             }).encode()
             return self._send(200, body, "application/json")
         if path == "/api/session":
