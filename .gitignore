@@ -1,0 +1,6 @@
+build/
+__pycache__/
+shots/
+nohup.out
+*.log
+.DS_Store
