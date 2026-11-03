@@ -20,16 +20,30 @@
   </div>
   <div class="controls">
     <span id="modeBadge" class="badge" title="bridge mode re-inspects the session on change">STATIC</span>
+    <button id="btnTour" class="tgl" title="Guided walkthrough of the stage">TOUR</button>
     <button id="btnFov" class="tgl on" title="Show what fits the 51° FOV of Snap Spectacles at 1.5 m">FOV</button>
     <button id="btnRuler" class="tgl" title="Angular ruler (degrees from gaze axis)">RULER</button>
     <button id="btnPlay" class="tgl" title="Play the bounced mix">▶ PLAY</button>
   </div>
 </header>
 
-<footer id="statusbar">
+<aside id="legend" aria-label="Session provenance">
   <span id="provenance">—</span>
   <span class="dim">IA: docs/AR-INFORMATION-ARCHITECTURE.md · same layout drives the Lens (lens/)</span>
-</footer>
+</aside>
+
+<div id="tour" class="hidden" role="dialog" aria-label="Guided walkthrough">
+  <div id="tourSpotA" class="tour-spot"></div>
+  <div id="tourSpotB" class="tour-spot hidden"></div>
+  <div id="tourCard" role="status">
+    <div id="tourStep"></div>
+    <p id="tourCaption"></p>
+    <div id="tourActions">
+      <button id="tourSkip">Skip tour</button>
+      <button id="tourNext">Next →</button>
+    </div>
+  </div>
+</div>
 
 <div id="inspect" class="hidden" role="dialog" aria-modal="true">
   <div class="panel">
