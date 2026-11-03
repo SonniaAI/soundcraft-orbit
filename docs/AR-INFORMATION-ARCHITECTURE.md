@@ -32,16 +32,17 @@ All coordinates are millimetres at a 1.5 m reference depth from the user, x to t
 
 | Element | Position (x, y, depth) | Size | Encodes |
 | --- | --- | --- | --- |
-| **Session ring** (8 bar segments + center readout) | −330, +40, 1500 | R 110, ring thickness 26 | bar coverage, playhead, BPM (center) |
-| **Track cards** ×6 on a shallow arc | θ −2.5°→+17.5°, depth 1450→1650, y −60 (+20 mm bow) | 84 × 140 | per-track material / processing / balance |
-| **Bounce plaque** | −330, −285, 1500 | 200 × 104 | output state (LUFS, peaks, age, size) |
+| **Session ring** (8 bar segments + center readout) | −350, +70, 1500 | R 145, ring thickness 30 | bar coverage, playhead, BPM (center) |
+| **Track cards** ×6 on a shallow arc | θ −4°→+21°, depth 1440→1590, y −45 (+30 mm bow) | 110 × 165 | per-track material / processing / balance |
+| **Bounce plaque** | −60, −285, 1500 | 300 × 115 | output state (LUFS, peaks, age, size) |
 
 Rationale:
 
 - **The ring sits nearest the gaze axis** (−12.4° left of center). It is the one number that answers "how far along is the track" — the ambient answer requires no eye movement to the periphery.
-- **Track cards read left→right in signal-flow order** (rhythm → harmony → melody: Kick, Snare, Hats, Bass, Keys, Lead), the mental model of a console bent into a shallow arc around the user. Depth staggers 1450→1650 mm so each card gets its own parallax plane — cards never visually stack.
-- **The plaque hangs below the ring** — the "output tray" under the session core. Mix bounces are artifacts that materialize there, which keeps the metaphor physical: the track is a thing being built; the bounce is the thing that drops off the end of it.
-- The full stage spans −16.4° … +19.8° horizontally — comfortably inside the ±25.5° half-FOV, leaving the outer ~5° on each side as peripheral reserve (head motion, not eye strain, brings edges in).
+- **Track cards read left→right in signal-flow order** (rhythm → harmony → melody: Kick, Snare, Hats, Bass, Keys, Lead), the mental model of a console bent into a shallow arc around the user. Depth staggers 1440→1590 mm so each card gets its own parallax plane — cards never visually stack.
+- **The plaque sits bottom-center, under the card arc** — the "output tray" at the end of the signal chain. Mix bounces are artifacts that materialize there, which keeps the metaphor physical: the track is a thing being built; the bounce is the thing that drops off the end of it.
+- The full stage spans −18.5° … +21.4° horizontally — comfortably inside the ±25.5° half-FOV, leaving the outer ~4° on each side as peripheral reserve (head motion, not eye strain, brings edges in).
+- **Web rendering (v1.1):** the companion scales the entire 51° × 30° FOV frame to fit the viewport, so the dashed frame is always fully visible at default zoom; the in-scene geometry fills the frame so the stage uses the whole window. A guided walkthrough (TOUR, auto-starts on first visit) explains ring, cards, plaque, FOV and ruler; provenance lives in a top-right legend.
 
 ## 3. The 51° FOV budget
 

@@ -7,12 +7,12 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
-  font: 14px/1.45 "Avenir Next", "Segoe UI", system-ui, sans-serif; overflow: hidden; }
+  font: 15px/1.45 "Avenir Next", "Segoe UI", system-ui, sans-serif; overflow: hidden; }
 
 #stage { position: fixed; inset: 0; display: block; cursor: default; }
 
 #topbar {
-  position: fixed; top: 0; left: 0; right: 0;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 18px; pointer-events: none;
 }
@@ -21,28 +21,52 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
   border: 3px solid var(--accent); border-left-color: transparent; transform: rotate(-20deg); }
 h1 { font-size: 15px; margin: 0; letter-spacing: 0.14em; }
 h1 .dim { letter-spacing: 0.02em; font-weight: 400; }
-.sub { margin: 0; font-size: 12px; color: var(--dim); }
+.sub { margin: 0; font-size: 12.5px; color: var(--dim); }
 .controls { display: flex; gap: 8px; align-items: center; pointer-events: auto; }
 
 .badge { font-size: 11px; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 999px;
   border: 1px solid var(--line); color: var(--dim); }
 .badge.live { color: #7bd88f; border-color: rgba(123, 216, 143, 0.5); }
 
-.tgl { background: transparent; border: 1px solid var(--line); color: var(--dim);
-  font: inherit; font-size: 12px; letter-spacing: 0.08em; padding: 5px 12px;
+.tgl { background: transparent; border: 1px solid var(--line); color: rgba(232,236,241,0.78);
+  font: inherit; font-size: 12.5px; letter-spacing: 0.08em; padding: 6px 14px;
   border-radius: 8px; cursor: pointer; transition: all .15s; }
 .tgl:hover { color: var(--ink); border-color: rgba(232,236,241,0.4); }
 .tgl.on { color: #0b0d10; background: var(--ink); border-color: var(--ink); }
 
-#statusbar { position: fixed; left: 18px; right: 18px; bottom: 12px;
-  display: flex; justify-content: space-between; gap: 16px;
-  font-size: 12px; color: var(--dim); pointer-events: none; }
-#statusbar .dim { text-align: right; }
+/* Legend — provenance moved off the full-width footer into a compact panel */
+#legend { position: fixed; top: 90px; right: 16px; z-index: 20;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 3px;
+  max-width: 430px; text-align: right; pointer-events: none;
+  background: rgba(11, 13, 16, 0.58); border: 1px solid var(--line);
+  border-radius: 10px; padding: 9px 13px; }
+#legend #provenance { font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: rgba(232, 236, 241, 0.8); }
+#legend .dim { font-size: 11.5px; color: var(--dim); }
 .dim { color: var(--dim); }
 
-#inspect { position: fixed; inset: 0; background: rgba(5, 7, 9, 0.72);
+/* Guided walkthrough — spotlight + caption. The spotlight layer never
+   intercepts pointer events, so PLAY and card inspect keep working mid-tour. */
+#tour { position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+.tour-spot { position: absolute; border: 2px solid var(--accent); border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(4, 6, 8, 0.74); transition: all .28s ease; }
+#tourCard { position: absolute; left: 18px; bottom: 18px; z-index: 41; pointer-events: auto;
+  width: min(470px, calc(100vw - 36px)); background: #12151a;
+  border: 1px solid rgba(255, 176, 59, 0.55); border-radius: 14px; padding: 16px 18px 14px; }
+#tourStep { font-size: 11px; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 6px; }
+#tourCaption { margin: 0 0 12px; font-size: 15px; line-height: 1.5; color: var(--ink); }
+#tourActions { display: flex; justify-content: space-between; align-items: center; }
+#tourSkip { background: none; border: 0; color: var(--dim); font: inherit; font-size: 12.5px;
+  cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 0; }
+#tourSkip:hover { color: var(--ink); }
+#tourNext { background: var(--accent); border: 0; color: #131007; font: inherit; font-weight: 600;
+  font-size: 13px; letter-spacing: 0.04em; padding: 7px 16px; border-radius: 9px; cursor: pointer; }
+#tourNext:hover { filter: brightness(1.08); }
+
+.hidden { display: none !important; }
+
+#inspect { position: fixed; inset: 0; z-index: 50; background: rgba(5, 7, 9, 0.72);
   display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
-#inspect.hidden { display: none; }
 .panel { position: relative; width: min(560px, 92vw); background: #12151a;
   border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px 18px; }
 #inspectClose { position: absolute; top: 10px; right: 12px; background: none; border: 0;
@@ -53,6 +77,6 @@ h1 .dim { letter-spacing: 0.02em; font-weight: 400; }
 .chip { font-size: 11px; color: var(--dim); border: 1px solid var(--line);
   border-radius: 999px; padding: 2px 8px; }
 #inspectWave { width: 100%; margin: 4px 0 12px; }
-#inspectMeta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 13px; }
+#inspectMeta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 13.5px; }
 #inspectMeta b { display: block; font-size: 11px; letter-spacing: 0.1em; color: var(--dim); font-weight: 500; }
-#inspectFoot { margin: 14px 0 0; font-size: 12px; }
+#inspectFoot { margin: 14px 0 0; font-size: 12.5px; }

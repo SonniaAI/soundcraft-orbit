@@ -2,9 +2,9 @@
  * OrbitSessionController.ts — Orbit AR-first track-progress stage for Snap Spectacles.
  *
  * Builds the IA described in docs/AR-INFORMATION-ARCHITECTURE.md:
- *   - session ring (8 bar segments) at (-330, +40) mm, R 110 mm, depth 1500 mm
- *   - track cards on a shallow arc, theta -2.5°..+17.5°, depth 1450..1650 mm
- *   - bounce plaque at (-330, -285) mm, 200 x 104 mm
+ *   - session ring (8 bar segments) at (-350, +70) mm, R 145 mm, depth 1500 mm
+ *   - track cards on a shallow arc, theta -4°..+21°, depth 1440..1590 mm
+ *   - bounce plaque at (-60, -285) mm, 300 x 115 mm
  *
  * Lens Studio world units are CENTIMETRES; the IA is millimetres at 1.5 m,
  * so every coordinate is divided by 10 (mm -> LS units).
@@ -28,10 +28,10 @@ import { SessionDataSource } from "./SessionDataSource";
 
 const MM = 0.1; // mm -> Lens Studio units (cm)
 
-// IA geometry — single source of truth mirrored from web/app.js
-const RING = { x: -330, y: 40, d: 1500, r: 110, th: 26 };
-const CARD = { w: 84, h: 140, d0: 1450, dd: 40, th0: -2.5, dth: 4.0, y: -60, bow: 20 };
-const PLAQUE = { x: -330, y: -285, d: 1500, w: 200, h: 104 };
+// IA geometry — single source of truth mirrored from web/app.js (v1.1)
+const RING = { x: -350, y: 70, d: 1500, r: 145, th: 30 };
+const CARD = { w: 110, h: 165, d0: 1440, dd: 30, th0: -4.0, dth: 5.0, y: -45, bow: 30 };
+const PLAQUE = { x: -60, y: -285, d: 1500, w: 300, h: 115 };
 const TRACK_ORDER = ["Kick", "Snare", "Hats", "Bass", "Keys", "Lead"];
 
 @component
@@ -103,6 +103,8 @@ export class OrbitSessionController extends BaseScriptComponent {
 
   // ------------------------------------------------------------------
   private buildRing(bars: number, data: any) {
+    const mats = data.tracks.filter((t: any) => t.clips && t.clips.length > 0).length;
+    const total = data.tracks.length;
     const seg = 360 / bars;
     for (let k = 0; k < bars; k++) {
       const cov = this.barCoverage(k + 1, data);
@@ -123,12 +125,14 @@ export class OrbitSessionController extends BaseScriptComponent {
       img.mainPass.baseColor = new vec4(0.91, 0.93, 0.95, a);
     }
 
-    this.label(this.ringRoot, "bpm", RING.x, RING.y + 4, RING.d,
-      `${Math.round(data.session.bpm)}`, 30, new vec4(0.91, 0.93, 0.95, 0.95));
-    this.label(this.ringRoot, "bpm-cap", RING.x, RING.y - 14, RING.d,
-      "BPM", 11, new vec4(0.91, 0.93, 0.95, 0.55));
-    this.label(this.ringRoot, "session-name", RING.x, RING.y + RING.r + 16, RING.d,
-      String(data.session.name).toUpperCase(), 13, new vec4(0.91, 0.93, 0.95, 0.8));
+    this.label(this.ringRoot, "tracks", RING.x, RING.y + 34, RING.d,
+      `${mats}/${total} TRACKS`, 12.5, new vec4(0.91, 0.93, 0.95, 0.78));
+    this.label(this.ringRoot, "bpm", RING.x, RING.y - 8, RING.d,
+      `${Math.round(data.session.bpm)}`, 34, new vec4(0.91, 0.93, 0.95, 0.95));
+    this.label(this.ringRoot, "bpm-cap", RING.x, RING.y - 32, RING.d,
+      "BPM", 12, new vec4(0.91, 0.93, 0.95, 0.6));
+    this.label(this.ringRoot, "session-name", RING.x, RING.y + RING.r + RING.th + 12, RING.d,
+      String(data.session.name).toUpperCase(), 16, new vec4(0.91, 0.93, 0.95, 0.92));
   }
 
   private barCoverage(k: number, data: any): number {
@@ -159,17 +163,17 @@ export class OrbitSessionController extends BaseScriptComponent {
       PLAQUE.x, PLAQUE.y, PLAQUE.d, PLAQUE.w, PLAQUE.h, this.cardMat);
     so.mainPass.baseColor = new vec4(0.06, 0.07, 0.09, 0.5);
 
-    this.label(this.plaqueRoot, "plaque-cap", PLAQUE.x, PLAQUE.y + 34, PLAQUE.d,
-      "MIX BOUNCE", 10, new vec4(0.91, 0.93, 0.95, 0.6));
-    this.label(this.plaqueRoot, "plaque-lufs", PLAQUE.x - 20, PLAQUE.y + 6, PLAQUE.d,
+    this.label(this.plaqueRoot, "plaque-cap", PLAQUE.x - 45, PLAQUE.y + 33, PLAQUE.d,
+      "MIX BOUNCE", 11, new vec4(0.91, 0.93, 0.95, 0.68));
+    this.label(this.plaqueRoot, "plaque-lufs", PLAQUE.x - 45, PLAQUE.y - 9, PLAQUE.d,
       b.lufs.toFixed(1), 34, new vec4(0.91, 0.93, 0.95, 0.95));
-    this.label(this.plaqueRoot, "plaque-lufs-cap", PLAQUE.x + 52, PLAQUE.y + 6, PLAQUE.d,
-      "LUFS", 10, new vec4(0.91, 0.93, 0.95, 0.5));
-    this.label(this.plaqueRoot, "plaque-peak", PLAQUE.x, PLAQUE.y - 14, PLAQUE.d,
-      `PK ${b.peakDb.toFixed(1)} dBFS · TP ${b.truePeakDb.toFixed(1)} dBTP`, 11,
-      new vec4(0.91, 0.93, 0.95, 0.75));
-    this.label(this.plaqueRoot, "plaque-age", PLAQUE.x, PLAQUE.y - 32, PLAQUE.d,
-      `${(b.bytes / 1e6).toFixed(1)} MB · ${b.seconds.toFixed(1)} s`, 10,
-      new vec4(0.91, 0.93, 0.95, 0.45));
+    this.label(this.plaqueRoot, "plaque-lufs-cap", PLAQUE.x + 40, PLAQUE.y - 9, PLAQUE.d,
+      "LUFS", 11.5, new vec4(0.91, 0.93, 0.95, 0.6));
+    this.label(this.plaqueRoot, "plaque-peak", PLAQUE.x - 45, PLAQUE.y - 30, PLAQUE.d,
+      `PK ${b.peakDb.toFixed(1)} dBFS · TP ${b.truePeakDb.toFixed(1)} dBTP`, 12,
+      new vec4(0.91, 0.93, 0.95, 0.8));
+    this.label(this.plaqueRoot, "plaque-age", PLAQUE.x - 45, PLAQUE.y - 48, PLAQUE.d,
+      `${(b.bytes / 1e6).toFixed(1)} MB · ${b.seconds.toFixed(1)} s`, 11,
+      new vec4(0.91, 0.93, 0.95, 0.58));
   }
 }
