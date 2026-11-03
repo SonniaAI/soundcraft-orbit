@@ -1,0 +1,61 @@
+{
+  "$schema": "https://docs.ar-information-architecture/orbit-scene@1",
+  "name": "Orbit — SoundCraft track progress",
+  "target": "Snap Spectacles (Lens Studio 5.x)",
+  "units": "Lens Studio world units are centimetres; IA millimetres are divided by 10",
+  "scene_hierarchy": [
+    {
+      "name": "Orbit Stage",
+      "type": "SceneObject",
+      "children": [
+        {
+          "name": "Ring",
+          "type": "SceneObject",
+          "attach": "OrbitSessionController.ringRoot",
+          "note": "controller creates 8 bar segment quads + bpm/name labels under this"
+        },
+        {
+          "name": "Cards",
+          "type": "SceneObject",
+          "attach": "OrbitSessionController.cardsRoot",
+          "note": "controller creates one TrackCard per session track under this"
+        },
+        {
+          "name": "Plaque",
+          "type": "SceneObject",
+          "attach": "OrbitSessionController.plaqueRoot",
+          "note": "controller creates the bounce plaque under this"
+        }
+      ]
+    },
+    {
+      "name": "Orbit Controller",
+      "type": "ScriptComponent",
+      "script": "Scripts/OrbitSessionController.ts",
+      "inputs": {
+        "ringRoot": "SceneObject 'Ring'",
+        "cardsRoot": "SceneObject 'Cards'",
+        "plaqueRoot": "SceneObject 'Plaque'",
+        "segmentMat": "Unlit material 'seg' (opaque double-sided, vertex color off)",
+        "cardMat": "Unlit material 'card' (transparent blend)",
+        "textMat": "Text material using font below",
+        "font": "Editorium/Newspaper bold (or any Latin bold font)",
+        "remoteService": "Remote Service module 'orbit-data'",
+        "dataUrl": "https://<pages-host>/soundcraft-orbit/data/session.json"
+      }
+    }
+  ],
+  "remote_service": {
+    "name": "orbit-data",
+    "allowed_hosts": ["<pages-host>"],
+    "note": "Project Settings > Remote Service > add host serving web/data/session.json"
+  },
+  "camera": {
+    "position": [0, 0, 0],
+    "note": "Spectacles passthrough camera; stage sits 1.3-1.65 m from head at 1.5 m reference"
+  },
+  "placement": {
+    "note": "World-space, no anchor required for preview; for on-device use a LocationAnchor at the desk",
+    "stage_origin": "0.4 m left of and 0.2 m above the user's forward gaze axis at rest"
+  }
+}

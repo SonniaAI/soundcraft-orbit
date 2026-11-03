@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit — SoundCraft track progress (AR-first)</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='none' stroke='%23FFB03B' stroke-width='10' stroke-dasharray='40 18'/></svg>">
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<header id="topbar">
+  <div class="brand">
+    <span class="mark"></span>
+    <div>
+      <h1>ORBIT <span class="dim">/ SoundCraft track progress</span></h1>
+      <p id="sessionLine" class="sub">loading session…</p>
+    </div>
+  </div>
+  <div class="controls">
+    <span id="modeBadge" class="badge" title="bridge mode re-inspects the session on change">STATIC</span>
+    <button id="btnFov" class="tgl on" title="Show what fits the 51° FOV of Snap Spectacles at 1.5 m">FOV</button>
+    <button id="btnRuler" class="tgl" title="Angular ruler (degrees from gaze axis)">RULER</button>
+    <button id="btnPlay" class="tgl" title="Play the bounced mix">▶ PLAY</button>
+  </div>
+</header>
+
+<footer id="statusbar">
+  <span id="provenance">—</span>
+  <span class="dim">IA: docs/AR-INFORMATION-ARCHITECTURE.md · same layout drives the Lens (lens/)</span>
+</footer>
+
+<div id="inspect" class="hidden" role="dialog" aria-modal="true">
+  <div class="panel">
+    <button id="inspectClose" aria-label="Close">✕</button>
+    <div id="inspectHead">
+      <span id="inspectSwatch"></span>
+      <h2 id="inspectName"></h2>
+      <span id="inspectKind" class="chip"></span>
+    </div>
+    <canvas id="inspectWave" height="120"></canvas>
+    <div id="inspectMeta"></div>
+    <p class="dim" id="inspectFoot"></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

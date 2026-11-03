@@ -1,0 +1,26 @@
+session.new {"name":"First Light (8 bars 120 BPM)","sample_rate":48000}
+event.tempo {"bpm":120}
+file.import_audio {"path":"build/stems/kick.wav"}
+file.import_audio {"path":"build/stems/snare.wav"}
+file.import_audio {"path":"build/stems/hats.wav"}
+file.import_audio {"path":"build/stems/bass.wav"}
+file.import_audio {"path":"build/stems/keys.wav"}
+file.import_audio {"path":"build/stems/lead2.wav","at":"0:08.000"}
+track.rename {"track":2,"name":"Kick"}
+track.rename {"track":5,"name":"Snare"}
+track.rename {"track":8,"name":"Hats"}
+track.rename {"track":11,"name":"Bass"}
+track.rename {"track":14,"name":"Keys"}
+track.rename {"track":17,"name":"Lead"}
+mix.volume {"track":"Kick","db":-1.0}
+mix.volume {"track":"Snare","db":-3.0}
+mix.volume {"track":"Hats","db":-9.0}
+mix.volume {"track":"Bass","db":-4.0}
+mix.volume {"track":"Keys","db":-7.0}
+mix.volume {"track":"Lead","db":-9.0}
+mix.insert {"track":"Kick","plugin":"compressor"}
+mix.insert {"track":"Snare","plugin":"eq_7band"}
+mix.insert {"track":"Keys","plugin":"plate_reverb"}
+mix.insert {"track":"Lead","plugin":"plate_reverb"}
+mix.insert {"track":"Bass","plugin":"saturator"}
+mix.insert {"track":"Lead","slot":1,"plugin":"chorus"}
