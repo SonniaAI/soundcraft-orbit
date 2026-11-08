@@ -24,7 +24,7 @@ submission; no recording, YouTube upload, or submission exists yet.
 | Pad plays its assigned source | **PENDING** | to be proven by a later Spark read-only job; not claimed now |
 | Spectacles hardware demo | **PENDING — no device** | Preview-only by constraint; disclosed |
 | Approved plan-lens design brief | **PENDING** | `devpost/design-brief.md` frontmatter stays `draft`; learner approval outstanding |
-| Public repo containing Lens project + devpost docs | **PENDING** | path open (allowlist rows R5–R7 remain: post-push verification) |
+| Public repo containing Lens project + devpost docs | **VERIFIED** | PR #4 merged to public main as `36425c5`; all 212 payload blobs matched remotely — `receipts/lens-publication-20261108.json` |
 | Public YouTube video <3 min | **PENDING** | no recording exists; recorder source in `tools/preview-recording/` is optional; video-upload authentication still unknown |
 
 ## B. Acceptance rows awaiting actual receipts

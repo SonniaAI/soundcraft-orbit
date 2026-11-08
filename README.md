@@ -28,8 +28,9 @@ The design brief is still a draft without author approval. No video,
 YouTube upload, or Devpost submission exists yet; a fresh clone has not
 been runtime-tested.
 
-**Publishing:** push permission to the existing public repo is granted and
-the allowlist/scrub work is done — see
+**Published:** the Lens project and planning documents are on public `main`
+(PR #4, merge `36425c5`). All 212 payload files were checked against the
+remote Git blob IDs; see `receipts/lens-publication-20261108.json`. See
 [`devpost/publication-allowlist.md`](devpost/publication-allowlist.md) for
 the exact paths, [`devpost/reproducibility.md`](devpost/reproducibility.md)
 for judge-facing run steps,

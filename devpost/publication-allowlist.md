@@ -1,5 +1,14 @@
 # Proposed public allowlist — what may enter the public commit
 
+## Published milestone — 8 November, 22:02 UTC
+
+PR #4 merged to public `main` as `36425c5`. Post-push verification matched
+all 212 payload file blob IDs, 14 WAVs and seven SDK packages, with no
+private checkout/credential paths, live private hostnames, embedded
+repositories or LFS pointers in the payload. Receipt:
+`receipts/lens-publication-20261108.json`. The checklist below is retained
+as the publication procedure; its post-push gates have now been performed.
+
 Updated 8 November 2026 (evening). Docs-prep session; read-only audit.
 Nothing has been staged, committed, or pushed. The actual `git add`/push
 belongs to the repository owner (permission now granted — see below).
