@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
+    "lib": ["es2021"],
+    "types": [],
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "../.."
+  },
+  "include": [
+    "../../lens-studio-specs/Assets/Scripts/SoundcraftCompanionTypes.ts",
+    "../../lens-studio-specs/Assets/Scripts/SoundcraftCompanionHttp.ts",
+    "../../lens-studio-specs/Assets/Scripts/SoundcraftCompanionClient.ts",
+    "tests"
+  ],
+  "exclude": ["dist", "node_modules"]
+}

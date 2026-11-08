@@ -1,0 +1,16 @@
+- !<AssetImportMetadata/ecfc7a26-fd49-41c2-a269-91e3f64cc782>
+  ImportedAssetIds:
+    {}
+  ImporterName: NativePackageImporter
+  PrimaryAsset: !<reference> 042455e3-f10d-4e61-bd5d-bb7f010cb8cd
+  PackageType: PackedNativePackageRoot
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    {}
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000

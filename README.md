@@ -1,4 +1,78 @@
-# Orbit — AR-first track-progress view for SoundCraft
+# SoundCraft Orbit
+
+## New: playable SPECS Lens — current status (8 November 2026)
+
+**What works today (receipt-backed, local Lens Studio Preview only):**
+`lens-studio-specs/SoundcraftOrbit.esproj` compiles and runs clean (12 pads
+on 3 floating instrument panels, demo loop "VAPOR SUNSET" autostarts);
+**all 4 LEAF Preview smoke scenarios pass** via the real LEAF MCP path
+(`receipts/lens-preview-smoke-20261108.json`) — collider-local geometry,
+pinch pad-identity + `AudioComponent.isPlaying`, world-fixed drag restore,
+pan-toggle spatial flag restore. LEAF uses an overridden target, so these
+prove the handler paths, not natural target discrimination, audibility,
+hand-tracking, or any backend effect. The portable test suite
+(`tools/lens-client-tests`, `npm ci && npm test`) passes **87/87**, plus
+per-area unit checks (status 52 · workflow 22 · duration 12 · playlist 31 ·
+open-confirm 23). The saved scene contains **no private endpoints**, and
+a GitHub ZIP includes the actual assets rather than Git LFS pointers.
+
+**Honest limits:** playing creates a **local, session-only** take with
+local/unsaved status. The setup panel shows pairing,
+one-time-code (memory-only) and a two-tap Open-Last-Save control, but no
+companion service is deployed, so real pairing/capture/save/open are
+**untested against a deployed service**. Backend qualification run
+`42525348556` passed on the Spark, including real CLI save/reopen tests on
+Python 3.10 and 3.12. PR #19 remains open at `e9f52a7` while its final checks
+run — **no deployed image or Lens↔backend round trip is claimed**.
+The design brief is still a draft without author approval. No video,
+YouTube upload, or Devpost submission exists yet; a fresh clone has not
+been runtime-tested.
+
+**Publishing:** push permission to the existing public repo is granted and
+the allowlist/scrub work is done — see
+[`devpost/publication-allowlist.md`](devpost/publication-allowlist.md) for
+the exact paths, [`devpost/reproducibility.md`](devpost/reproducibility.md)
+for judge-facing run steps,
+[`devpost/demo-runbook.md`](devpost/demo-runbook.md) for the <3-min video
+plan, and [`devpost/submission-checklist.md`](devpost/submission-checklist.md)
+for the acceptance-vs-receipt table with the required pre-existing-work
+disclosure (SoundCraft/Forge and the older Orbit viewer below are
+pre-existing work, not this Lens).
+
+---
+
+## Historical implementation note — 5 November 2026
+
+The new experience is a fun mini-DAW in glasses: room-fixed instruments within
+reach, immediate local sound and visual feedback, and automatic capture into
+an editable SoundCraft project. The draft design is in
+[`devpost/design-brief.md`](devpost/design-brief.md); evidence and unfinished
+acceptance checks are in
+[`devpost/implementation-status.md`](devpost/implementation-status.md).
+
+- **Lens project:** `lens-studio-specs/SoundcraftOrbit.esproj`, configured for
+  Specs on Lens Studio 5.23.2 with compatible interaction packages. Full project
+  compilation, local runtime rendering, a Preview hand-pinch pad hit and panel
+  dragging have been checked. This does not establish hardware behaviour.
+- **Backend:** SoundCraft main `b1679b5` includes authenticated companion calls,
+  editable MIDI take commits and protected versioned saves. Backend subprocess
+  tests verify save/reopen; private Spark deployment and the Lens-to-backend
+  connection are still being completed.
+- **Not saved yet in the Lens:** the current take view remains explicitly
+  simulated/session-only. The companion-client scripts are wired into the scene,
+  but have not been qualified against a deployed service. Never interpret
+  local audio or a growing bar as a successful SoundCraft save.
+- **Monitoring:** the prototype uses original bundled one-shots as a local
+  monitor. SoundCraft headless does not yet supply live audio monitoring.
+- **Access:** planned private Tailscale HTTPS is for laptop Preview; glasses and
+  public judges do not automatically have that access. Cluster and MCP
+  credentials must never be included in this public project.
+
+The older read-only web viewer below is preserved as pre-existing work. It is
+not the new playable Lens. Its historical parked-repository statements describe
+that older milestone, not the current SoundCraft development state.
+
+## Earlier Orbit — AR-first track-progress view
 
 **See how the track is coming along — from across the room, at a glance, in AR.**
 

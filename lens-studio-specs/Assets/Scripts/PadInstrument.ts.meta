@@ -1,0 +1,46 @@
+- !<AssetImportMetadata/76aa3ff2-072c-4929-ad48-2fba48324a2d>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> a083471d-3993-4d60-9948-852683c5effc
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> a083471d-3993-4d60-9948-852683c5effc
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 1556dc1c-a731-4d57-a1ad-37d55fb745ee
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/1556dc1c-a731-4d57-a1ad-37d55fb745ee>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 69ae562e-dc18-4449-a740-0bda6511399a
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    instrumentType: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - instrumentType: beat
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input string instrumentType = "beat" {"label":"Instrument Type", "hint":"beat | bass | chord — selects the pad layout and palette"}'

@@ -1,0 +1,2 @@
+# Build outputs are machine-local and never committed.
+build/

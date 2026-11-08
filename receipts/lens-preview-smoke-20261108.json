@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-08",
+  "project": "lens-studio-specs/SoundcraftOrbit.esproj",
+  "scope": "Local Lens Studio Preview smoke tests through the official LEAF MCP tools; no SoundCraft connection or device run",
+  "environment": {
+    "lensStudio": "5.23.2.26081320",
+    "previewDevice": "SPECS 27",
+    "sikRuntime": "0.18.0",
+    "leafPluginRegistered": true,
+    "executionTarget": "preview"
+  },
+  "compile": {
+    "tool": "RecompileTypeScriptTool",
+    "status": "succeeded"
+  },
+  "runtime": {
+    "tool": "RunAndCollectLogsTool",
+    "mode": "refresh",
+    "firstActivityAtMs": 27,
+    "lensStartupObserved": true,
+    "padsDiscovered": 12,
+    "instrumentPanels": 3,
+    "warnings": [
+      "Editor-side resource stream: Host requires authentication",
+      "LeafPlugin skipped saving a destroyed panel instance during refresh"
+    ],
+    "note": "These editor warnings were not hidden or counted as Lens runtime exceptions. No Lens startup exception was observed in the fresh window."
+  },
+  "scenarios": [
+    {
+      "id": "soundcraft-collider-local-geometry",
+      "status": "succeeded",
+      "managerEvidence": "21:24:13.735 [DefaultLeafScenarioManager] [0.003s] PASSED: soundcraft-collider-local-geometry",
+      "proves": "Explicit local box sizes, component reuse, fitVisual=false, unrotated scale mapping, and independently composed rotated transform corners; scratch objects cleaned up"
+    },
+    {
+      "id": "soundcraft-pinch-beat-pad-records-take",
+      "status": "succeeded",
+      "managerEvidence": "21:24:20.316 [DefaultLeafScenarioManager] [2.357s] PASSED: soundcraft-pinch-beat-pad-records-take",
+      "proves": "SIK handler path records the correct beat/pad hit, pad and orb pulse, and AudioComponent.isPlaying is observed; test-owned changes restored",
+      "doesNotProve": "Speaker audibility, natural target selection, or backend capture"
+    },
+    {
+      "id": "soundcraft-drag-panel-world-fixed-restore",
+      "status": "succeeded",
+      "managerEvidence": "21:24:30.004 [DefaultLeafScenarioManager] [3.188s] PASSED: soundcraft-drag-panel-world-fixed-restore",
+      "proves": "Panel moves through the SIK drag path, its world parent stays fixed, and the test restores the original transform"
+    },
+    {
+      "id": "soundcraft-pan-toggle-reverses-spatial",
+      "status": "succeeded",
+      "managerEvidence": "21:24:37.802 [DefaultLeafScenarioManager] [2.761s] PASSED: soundcraft-pan-toggle-reverses-spatial",
+      "proves": "SIK toggle reverses and restores the actual local AudioComponent spatial/position/distance effect flags"
+    }
+  ],
+  "evidenceHandling": {
+    "serialExecution": true,
+    "perScenarioTimeoutSeconds": 30,
+    "authoritativeSource": "Lens-side DefaultLeafScenarioManager PASSED lines, not only panel status",
+    "inlineLogWasCapped": true,
+    "fallback": "Read the source log from the pre-run byte offset and selected the four matching Lens-side PASSED lines"
+  },
+  "earlierFailure": {
+    "id": "soundcraft-collider-local-geometry",
+    "message": "Expected: 16 - Received: 29.49251365661621",
+    "resolution": "Corrected the test to refresh native shape references after replacement and separate unrotated scale assertions from rotated transform composition. Production collider code was not relaxed. The corrected scenario was then run and passed."
+  },
+  "notEstablished": [
+    "No deployed SoundCraft API, Lens HTTPS pairing, or Lens-initiated backend save/reopen is proved by these tests",
+    "LEAF uses an overridden SIK target; these handler tests do not establish natural sibling-collider target discrimination",
+    "No Spectacles hardware, long-session comfort, hand-tracking feel, or hardware latency measurement",
+    "Local spatial monitoring does not establish saved pan automation or exact equality with a backend stereo mix"
+  ]
+}
