@@ -71,6 +71,10 @@ companion service is deployed** — no receipt can exist for them yet.
 
 **Publication path (resolved):**
 
+- The local Preview milestone is now on public `main`: PR #4 merged as
+  `36425c5` at 22:02 UTC. All 212 payload files matched the remote blob IDs;
+  the remote contains 14 WAVs and seven SDK packages, with no private
+  checkout or credential paths. See `receipts/lens-publication-20261108.json`.
 - Push permission to the existing public target
   `SonniaAI/soundcraft-orbit` is **granted** (verified true).
 - LFS is resolved: custom binary/`.mjs` rules were appended at the end of

@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-08",
+  "scope": "Publication of the verified local Preview milestone, not completion of the backend-connected demo",
+  "repository": "https://github.com/SonniaAI/soundcraft-orbit",
+  "pullRequest": "https://github.com/SonniaAI/soundcraft-orbit/pull/4",
+  "mergedAt": "2026-11-08T22:02:08Z",
+  "payloadCommit": "9147ade8176f8cd182065b7eae369c56f3ddd99f",
+  "mainMergeCommit": "36425c521125fd416094dbd78dae78d250cde736",
+  "verification": {
+    "remotePayloadFilesComparedByGitBlobId": 212,
+    "mismatchedFiles": 0,
+    "originalWavFiles": 14,
+    "sdkPackages": 7,
+    "sceneBytes": 201973,
+    "privateCheckoutOrCredentialPathsOnRemote": 0,
+    "livePrivateTailnetHostsInPayloadText": 0,
+    "credentialShapedValuesInPayloadText": 0,
+    "gitLfsPointersInPayload": 0,
+    "embeddedRepositoriesInPayload": 0
+  },
+  "handling": {
+    "explicitAllowlistUsed": true,
+    "originalAudioPreserved": true,
+    "existingOrbitViewerPreserved": true,
+    "generatedShaderWhitespacePreserved": true,
+    "note": "Credential/hostname checks covered publishable text; official binary SDK archives were inventoried, not represented as a complete binary-content security audit."
+  },
+  "runtimeEvidence": "receipts/lens-preview-smoke-20261108.json",
+  "notEstablished": [
+    "The public ZIP has not been opened in a separate clean Lens Studio project",
+    "No deployed companion or Lens-created backend save/reopen is proved by publication",
+    "No Spectacles hardware, recorded video, YouTube upload, or completed Devpost submission",
+    "The design brief remains draft pending explicit approval"
+  ]
+}
