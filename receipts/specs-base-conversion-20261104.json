@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-04",
+  "task": "Set up SPECS Base Template project for mini-DAW Lens via official CLAD/MCP only; preserve old empty Default-template project; no publishing; no user CLI actions",
+  "project": {
+    "originalPreserved": {
+      "path": "/private/var/folders/sj/zybpbq1n6ys0z36d3m8068tr0000gn/T/opencode/soundcraft-orbit-lens-20261104/lens-studio/Orbit.esproj",
+      "template": "Snapchat / Default (fromTemplateName: Default, targetPlatform: Snapchat)",
+      "integrity": "sha256 of Orbit.esproj and Assets/Scene.scene verified IDENTICAL before and after all work (OK OK)"
+    },
+    "newWorkingProject": {
+      "path": "/private/var/folders/sj/zybpbq1n6ys0z36d3m8068tr0000gn/T/opencode/soundcraft-orbit-lens-20261104/lens-studio-specs/SoundcraftOrbit.esproj",
+      "origin": "faithful full copy of the empty Orbit project (rsync, excluded Cache/ and *.lock), esproj renamed SoundcraftOrbit.esproj; original never modified",
+      "manifestAfter": {
+        "targetPlatform": "Spectacles",
+        "fromTemplateName": "Default (unchanged provenance field - see limitations)"
+      },
+      "lensStudio": "5.23.2 (build 26081320), PID 26041 after controlled restart, MCP server on 127.0.0.1:50040 (same port + keychain token reused, so project-managed MCP configs remained valid)"
+    }
+  },
+  "officialSources": [
+    "https://developers.specs.com/docs/clad/setup/setup-lens-studio (creation: home > SPECS > Base Template > File > Save As - GUI-only flow)",
+    "https://developers.specs.com/docs/clad/additional-guides/setup-specs-project (Convert a Project to SPECS - the documented conversion steps executed here)",
+    "https://developers.specs.com/docs/clad/additional-guides/open-project-in-cli"
+  ],
+  "method": {
+    "delegation": "Codex native MCP tool use, invoked as a headless tool: codex exec --sandbox read-only --skip-git-repo-check run from the codex-TRUSTED dir lens-studio/ (trust entry pre-existing from prior session receipt); model NOT overridden (codex default); 11 prompts logged in /tmp/codex-prompt-*.txt with outputs in /tmp/codex*-full.log and final messages in /tmp/codex*-last.txt",
+    "mcpToolsUsed": ["ListAllPanels", "ExecuteEditorCode", "PreviewPanelTool", "ListInstalledPackagesTool", "InstallLensStudioPackage", "SearchLensStudioAssetLibrary", "VirtualScene", "asset_graphql", "RunAndCollectLogsTool", "RecompileTypeScriptTool", "CapturePanelScreenshotTool"],
+    "editorApiCalls": ["Editor.Model.IModel.project.projectFile/targetPlatform reads", "project.targetPlatform = Editor.TargetPlatform.Spectacles", "IModel.openProject(new Editor.Path(...))", "project.save()"],
+    "httpRule": "no raw HTTP/REST against Lens Studio at any point; all contact via codex native MCP stack"
+  },
+  "conversionStepsAndOutcomes": {
+    "targetPlatform": "SET - ExecuteEditorCode returned {alreadySpectacles:false, nowSpectacles:true}; manifest on disk now reads 'targetPlatform: Spectacles' after project.save()",
+    "previewDevice": "SET - PreviewPanelTool setConfig deviceCategory=stereo, inputType=Interactive, sourcePath=Evening Outdoor scene; getConfig verbatim: {cameraView:Front, deviceName:SPECS 27, inputType:Interactive, upscale:1280}",
+    "packages": "INSTALLED via SearchLensStudioAssetLibrary + InstallLensStudioPackage: SpectaclesUIKit (UIKit v4.0.0, auto-installed Motion), then SpectaclesInteractionKit (InteractionKit v4.0.0, pulled in InteractionKit + Icons); 5 lspkg on disk in lens-studio-specs/Packages/: Icons, InteractionKit, Motion, SpectaclesInteractionKit, SpectaclesUIKit",
+    "camera": "VirtualScene single-surface apply: Camera Object far 1000 -> 100000 (official step: large far value), cameraType already Perspective; DeviceTracking component added with deviceTrackingMode World",
+    "sikPrefab": "VirtualScene apply create with _prefab '@id:747942df-7bf0-46db-bd6c-5207b9607649' (exact package-internal prefab path discovered by VirtualScene read: '@asset:Packages/SpectaclesInteractionKit.lspkg/Prefabs/InteractionKit.prefab'; asset_graphql hides packed assets unless showPackedContent); applied:1 errors:[]; full SIK hierarchy instantiated (Core/Configuration/Left+RightHand+MouseInteractors/Visuals/HandVisuals/Cursors)",
+    "save": "project.save() returned {saved:true, projectFile:.../lens-studio-specs/SoundcraftOrbit.esproj, targetPlatformIsSpectacles:true}; persisted to disk",
+    "logs": "RunAndCollectLogsTool errors:[] (empty, none capped); RecompileTypeScriptTool: 'TypeScript compiler is not configured (no TypeScript files in project)' - project has no own scripts yet; 0 TS2307 module errors in the post-restart LensStudioLog"
+  },
+  "verificationEvidence": {
+    "sceneJson": "lens-studio-specs/.virtual-scene.json (VirtualScene read): Camera Object root comps [Camera(Perspective, far=100000), DeviceTracking(World)]; SpectaclesInteractionKit root with 10-child SIK hierarchy; Lighting root with Envmap+Light children",
+    "manifest": "grep '^targetPlatform' lens-studio-specs/SoundcraftOrbit.esproj -> 'targetPlatform: Spectacles'",
+    "originalIntegrity": "sha256 -c /tmp/orbit-original-before.sha256 -> both files OK",
+    "editorCapture": "CapturePanelScreenshotTool SceneEditor: 'Successfully captured screenshot from panel: Scene: Scene' (1226x1340 jpeg, returned in-session)",
+    "previewConfig": "getConfig verbatim shows deviceName SPECS 27 (stereo) Interactive"
+  },
+  "incidentsAndResolutions": [
+    {
+      "incident": "First VirtualScene apply failed: 'Invalid transition from Immutable to Mutable. You cannot change model in Observers. Use Validators instead.'",
+      "rootCause": "App log (LensStudioLog-2026-11-04-16-41-26): SIK package install at 18:17 flooded TS2307 (stale module index) then its own post-install model change hit the same transition error 3x at 18:17:54, leaving the model stuck in Observers phase; later save() reported 'Cannot save project while an asset operation is in progress'",
+      "resolution": "Controlled app restart: osascript quit failed (User cancelled - blocked by hung op) -> SIGTERM succeeded; relaunched via open -a with the project file; new instance reused port 50040 + keychain token, project loaded clean in 6.65s; all conversion steps then applied cleanly and saved; post-restart log has 0 TS2307"
+    },
+    {
+      "incident": "codex from lens-studio-specs/ saw no MCP tools",
+      "rootCause": "that dir is not in codex trusted projects (~/.codex/config.toml [projects]); project .codex/config.toml is trust-gated",
+      "resolution": "ran codex from the already-trusted lens-studio/ dir; no config changes needed"
+    }
+  ],
+  "limitations": [
+    "fromTemplateName remains 'Default' in the manifest: creating a NATIVE SPECS Base Template project is documented as a GUI-only flow (Lens Studio home > SPECS > Base Template > File > Save As); neither the Editor API (only openProject/setDefaultProject/setEmptyProject - no create-from-template) nor the Lens Studio CLI (--exec: editor-api-export, export-lens, export-lso, project-update, run-script) can create a project from a template. The executed path is the official documented CONVERSION (Convert a Project to SPECS), applied to a copy, yielding the same functional baseline: Spectacles target, SPECS 27 preview, SPECS UI Kit + SIK packages, Perspective camera + DeviceTracking World + far 100000, SIK prefab in scene. A native-template project can still be created later in the GUI in under a minute if the user wants literal template provenance",
+    "Preview panel reports 'not ready: some assets aren't ready or a script failed to compile' so preview capture currently fails; retried ~30 min post-restart with BOTH input types (Interactive scene AND Multimedia video Hand Palm Moving.mp4) - identical error; RunAndCollectLogsTool shows errors:[] and RecompileTypeScriptTool reports 'TypeScript compiler is not configured (no TypeScript files in project)', and the SceneEditor capture succeeds - suspected cause: SIK/UIKit package-asset readiness or preview render lifecycle not completing in the headless locked-screen environment (display captured black via screencapture). Documented preview config was restored and re-verified (SPECS 27 stereo / Interactive / Evening Outdoor). Retry preview after first real scene edit or with an unlocked display",
+    "Project lives in an ephemeral temp workspace (opencode tmp dir); for long-term durability the user should relocate lens-studio-specs/ via Lens Studio (File > Save As) or filesystem copy when convenient - no action required now",
+    "Workspace git repo: everything still untracked (no commits made); nothing published or exported"
+  ],
+  "revert": [
+    "delete lens-studio-specs/ to discard the converted copy entirely (original lens-studio/Orbit.esproj untouched, sha256-verified)",
+    "Lens Studio app state: quit/relaunch as usual; MCP server + keychain token are app-managed; no ~/.codex/config.toml changes were made in this session",
+    "installed packages are project-scoped under lens-studio-specs/Packages/ and disappear with the folder"
+  ],
+  "secrets": "Lens Studio local Bearer token / http_headers never printed, logged, or written here; configs remain gitignored LS-managed files (copied verbatim into lens-studio-specs/ by rsync, still gitignored)"
+}

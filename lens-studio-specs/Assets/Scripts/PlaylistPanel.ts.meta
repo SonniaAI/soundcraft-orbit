@@ -1,0 +1,46 @@
+- !<AssetImportMetadata/501bce50-c02b-4fed-b4fd-5aec3927e166>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 0f935189-7d91-4f62-8c59-2735650fdd91
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 0f935189-7d91-4f62-8c59-2735650fdd91
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> c0a4d58b-f668-4953-8999-62b006388aac
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/c0a4d58b-f668-4953-8999-62b006388aac>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 6372a261-1201-4ecc-961d-8105d8422d3d
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    captureController: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - captureController: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input AssignableType_1 captureController {"label":"Capture Controller (optional)", "hint":"Optional SoundcraftCaptureController. Polled 4 Hz via getStatusSnapshot(); this panel never writes onSnapshot or statusText. Unwired = honest local-only rows."}'

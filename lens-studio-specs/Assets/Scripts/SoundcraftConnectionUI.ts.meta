@@ -1,0 +1,139 @@
+- !<AssetImportMetadata/e2be1c19-6714-4fd7-bdbb-7c591ee8e55a>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> ee73738e-cf8e-45a4-b840-6193235a2559
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> ee73738e-cf8e-45a4-b840-6193235a2559
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 3430660b-8ad0-4926-9a83-f6e3413abccd
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/3430660b-8ad0-4926-9a83-f6e3413abccd>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: a8aa41cd-e4a4-4686-b2e9-b2d80bf39aea
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    busyHint: false
+    codePlaceholder: false
+    collapsedHeight: false
+    colorError: false
+    colorInfo: false
+    colorNeutral: false
+    colorOk: false
+    colorWarn: false
+    controller: false
+    emptyCodeHint: false
+    endpointPlaceholder: false
+    expandedHeight: false
+    focalDistanceCm: false
+    footerNote: false
+    idleCompactText: false
+    inputRowHeight: false
+    judgeNoteText: false
+    missingEndpointHint: false
+    openArmedHint: false
+    openArmedLabel: false
+    openButtonLabel: false
+    openExpiredHint: false
+    pairButtonLabel: false
+    pairRowHeight: false
+    panelWidth: false
+    statusLineHeight: false
+    submittedHint: false
+    titleText: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - controller: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      panelWidth: !<float> 30.000000
+      expandedHeight: 28.500000
+      collapsedHeight: 8.500000
+      focalDistanceCm: !<float> 66.000000
+      statusLineHeight: !<float> 7.000000
+      inputRowHeight: 2.600000
+      pairRowHeight: 3.400000
+      titleText: COMPANION LINK
+      pairButtonLabel: PAIR — LINK COMPANION
+      endpointPlaceholder: "companion endpoint (https://…)"
+      openButtonLabel: OPEN LAST SAVE
+      openArmedLabel: TAP AGAIN — REPLACES LIVE DOC
+      codePlaceholder: one-time pairing code…
+      idleCompactText: WAITING — tap ▸ for connection details
+      emptyCodeHint: "enter the one-time code shown in the companion terminal, then tap PAIR"
+      submittedHint: code submitted and cleared (memory only) — outcome shows in the status line; a refused or burned code needs a fresh one
+      missingEndpointHint: "enter the companion endpoint (https://…), then tap PAIR"
+      busyHint: working… one action at a time
+      openArmedHint: ⚠ second tap opens the last saved project — the live document is REPLACED (data-preserving refusals still apply)
+      openExpiredHint: open-confirmation expired — nothing was opened
+      judgeNoteText: JUDGE LOCAL-ONLY MODE — local capture only; no backend actions offered
+      footerNote: "one-time code: used once · cleared after use · never stored or logged · no tokens are ever shown"
+      colorOk: !<Vec4> {x: 0.450000, y: 0.900000, z: 0.550000, w: 1.000000}
+      colorInfo: !<Vec4> {x: 0.450000, y: 0.700000, z: 0.950000, w: 1.000000}
+      colorWarn: !<Vec4> {x: 1.000000, y: 0.800000, z: 0.450000, w: 1.000000}
+      colorError: !<Vec4> {x: 0.900000, y: 0.450000, z: 0.450000, w: 1.000000}
+      colorNeutral: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 0.750000}
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input AssignableType_1 controller {"label":"Capture Controller", "hint":"The SoundcraftCaptureController ScriptComponent. Pair calls its existing submitPairingCode(); this panel hands the controller its status Text. No other controller API is used."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Layout"}'
+    - '// @ui {"widget":"group_start", "label":"Panel"}'
+    - '// @input float panelWidth = 30 {"label":"Panel Width (cm)", "hint":"Full panel width. Content = width − 2 × 1.4 cm padding.", "widget":"slider", "min":20, "max":44, "step":1}'
+    - '// @input float expandedHeight {"label":"Expanded Height (cm)", "hint":"Frame height with the endpoint/code entry + pair + open rows visible. Values below the readable-fit minimum (34) are raised to it.", "widget":"slider", "min":16, "max":44, "step":0.5}'
+    - '// @input float collapsedHeight {"label":"Collapsed Height (cm)", "hint":"Small near-playlist status after pairing: header + compact line only. Values below the fit minimum (10) are raised to it.", "widget":"slider", "min":6, "max":16, "step":0.5}'
+    - "// @input float focalDistanceCm = 70 {\"label\":\"Type Calibration Distance (cm)\", \"hint\":\"Panel placement depth used to scale the type roles. At or closer than 110 cm the canonical scale holds (readability floor); farther panels scale type up. Default matches this panel's scene placement (~70 cm).\", \"widget\":\"slider\", \"min\":40, \"max\":110, \"step\":1}"
+    - '// @input float statusLineHeight = 7 {"label":"Status Row Height (cm)", "hint":"Multi-line controller status row (phase · monitor · unsynced · playlist). ~1.05 cm per line at the canonical Caption size.", "widget":"slider", "min":4, "max":14, "step":0.5}'
+    - '// @input float inputRowHeight {"label":"Input Row Height (cm)", "hint":"TextInputField height. Values below the hand-friendly minimum (3.0) are raised to it.", "widget":"slider", "min":2, "max":4, "step":0.1}'
+    - '// @input float pairRowHeight {"label":"Pair Row Height (cm)", "hint":"One-touch Pair button height. Values below the hand-friendly minimum (4.2) are raised to it.", "widget":"slider", "min":2.4, "max":6, "step":0.1}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Labels"}'
+    - '// @ui {"widget":"group_start", "label":"Text"}'
+    - '// @input string titleText = "COMPANION LINK" {"label":"Title", "hint":"Panel header text."}'
+    - "// @input string pairButtonLabel = \"PAIR — LINK COMPANION\" {\"label\":\"Pair Button Label\", \"hint\":\"The big one-touch action. Calls configureEndpointAndPair(endpoint, code) — the controller's runtime workflow API.\"}"
+    - '// @input string endpointPlaceholder = "companion endpoint (https://…)" {"label":"Endpoint Placeholder", "hint":"Endpoint TextInputField placeholder (URL keyboard). The endpoint may be typed at runtime; the authored scene value stays sanitized/empty."}'
+    - '// @input string openButtonLabel = "OPEN LAST SAVE" {"label":"Open Button Label", "hint":"The guarded operator reopen (explicitOpenLastSavedProject). FIRST tap arms it; ONLY the second tap calls the controller."}'
+    - '// @input string openArmedLabel = "TAP AGAIN — REPLACES LIVE DOC" {"label":"Open Armed Label", "hint":"Shown after the first tap, until the second tap fires or the 8 s window expires."}'
+    - '// @input string codePlaceholder = "one-time pairing code…" {"label":"Code Placeholder", "hint":"TextInputField placeholder. The code itself is typed at runtime and is never an input."}'
+    - "// @input string idleCompactText = \"WAITING · tap ▸ for details\" {\"label\":\"Idle Compact Line\", \"hint\":\"Compact-line text before any status feed arrives. Must not claim a connection state — the controller's status row carries the truth.\"}"
+    - '// @input string emptyCodeHint = "enter the one-time code for this session, then tap PAIR" {"label":"Empty-Code Hint", "hint":"Shown when Pair is tapped with an empty field. The code comes from the operator for this session — never authored in the scene."}'
+    - "// @input string submittedHint = \"pairing… code cleared (memory only) — outcome shows in the status line\" {\"label\":\"Submitted Hint\", \"hint\":\"Shown right after a submit. States local facts only — the outcome arrives via the controller's status row.\"}"
+    - '// @input string missingEndpointHint = "enter the companion endpoint (https://…), then tap PAIR" {"label":"Missing Endpoint Hint", "hint":"Shown when Pair is tapped with an empty endpoint field."}'
+    - '// @input string busyHint = "working… one action at a time" {"label":"Busy Hint", "hint":"Shown while a workflow call is already in flight (the controller runs one at a time)."}'
+    - '// @input string openArmedHint = "⚠ second tap opens the last saved project — the live document is REPLACED (data-preserving refusals still apply)" {"label":"Open Armed Hint", "hint":"Shown while the reopen action is armed (first tap of two)."}'
+    - '// @input string openExpiredHint = "open-confirmation expired — nothing was opened" {"label":"Open Expired Hint", "hint":"Shown when the armed window lapses without a second tap."}'
+    - '// @input string judgeNoteText = "JUDGE LOCAL-ONLY MODE — local capture only; no backend actions offered" {"label":"Judge Mode Note", "hint":"Shown instead of the workflow affordances when controller.judgeLocalOnlyMode is authored on (the controller refuses them by design)."}'
+    - '// @input string footerNote = "code: used once · cleared after use · never stored or logged" {"label":"Footer Note", "hint":"Static hygiene note under the pair row."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Severity Colors"}'
+    - '// @ui {"widget":"group_start", "label":"Colors"}'
+    - '// @input vec4 colorOk = {0.45,0.9,0.55,1} {"label":"OK", "hint":"paired / capturing when CLEAN — escalates to warn the moment any hit/note/event loss or unknown-duration note exists.", "widget":"color"}'
+    - '// @input vec4 colorInfo = {0.45,0.7,0.95,1} {"label":"Info", "hint":"connecting / commit_pending.", "widget":"color"}'
+    - '// @input vec4 colorWarn = {1,0.8,0.45,1} {"label":"Warn", "hint":"awaiting_pair / commit_unknown / token_expired — and ANY phase with MISSED HITS, DROPPED NOTES, RETIRED EVENTS, unknown-duration notes, LONG NOTES NOT CAPTURED, TIMING UNCERTAIN (save withheld), or a WINDOW UNKNOWN stuck window.", "widget":"color"}'
+    - '// @input vec4 colorError = {0.9,0.45,0.45,1} {"label":"Error", "hint":"config_error / offline / commit_failed / backend_down.", "widget":"color"}'
+    - '// @input vec4 colorNeutral = {1,1,1,0.75} {"label":"Neutral", "hint":"local_only (judge mode) / unknown phases.", "widget":"color"}'
+    - '// @ui {"widget":"group_end"}'

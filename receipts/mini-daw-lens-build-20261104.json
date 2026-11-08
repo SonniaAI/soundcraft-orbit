@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-04",
+  "task": "Build SoundCraft mini-DAW Lens (SPECS) in lens-studio-specs/SoundcraftOrbit.esproj via official CLAD MCP only; no publishing, no old-Orbit code reuse, honest evidence vs limitations",
+  "result": {
+    "status": "BUILT — scene, scripts, and audio assets fully in place and saved; TypeScript code verified clean via editor's own isolated compilation pipeline; PROJECT-scope runtime compilation BLOCKED by an environment issue (locked physical display), so runtime preview verification was NOT possible",
+    "projectPath": "lens-studio-specs/SoundcraftOrbit.esproj",
+    "lensStudio": "5.23.2 (build 26081320), MCP via Codex native MCP stack (no raw HTTP, no tokens printed), Spectacles target, signed in (isAuthorized true)"
+  },
+  "whatWasBuilt": {
+    "audioAssets": {
+      "method": "ls-clad build-music + build-sfx engines (local algorithmic synthesis, sample-free, license-clean), generator script kept at lens-studio-specs/tempAssetGen/gen_music_soundcraft_pack.js per skill preflight rules",
+      "files": [
+        "Assets/GeneratedSFX/pad_kick.wav", "Assets/GeneratedSFX/pad_snare.wav", "Assets/GeneratedSFX/pad_hat.wav", "Assets/GeneratedSFX/pad_clap.wav",
+        "Assets/GeneratedSFX/bass_a.wav (A1)", "Assets/GeneratedSFX/bass_c.wav (C2)", "Assets/GeneratedSFX/bass_d.wav (D2)", "Assets/GeneratedSFX/bass_e.wav (E2)",
+        "Assets/GeneratedSFX/chord_1.wav (Cm)", "Assets/GeneratedSFX/chord_2.wav (Bb)", "Assets/GeneratedSFX/chord_3.wav (Ab)", "Assets/GeneratedSFX/chord_4.wav (Eb)",
+        "Assets/GeneratedSFX/demo_vapor.wav ('VAPOR SUNSET' — 30.9s vaporwave loop, C minor i-VII-VI-VII, 70 BPM, seeds pinned: chords 133985801, drums 595341609)",
+        "Assets/GeneratedSFX/ui_toggle.wav"
+      ],
+      "acousticGate": "ffmpeg volumedetect on all 14 WAVs: max_volume between -0.4 and -11.1 dB (all pass; silence floor is -30 dB)",
+      "originality": "fresh synthesis this session; no audio or code copied from the old Orbit/web project (old tools/session files untouched and unread)"
+    },
+    "scripts": {
+      "location": "Assets/Scripts/",
+      "files": ["SoundcraftBus.ts (session bus + interaction helpers)", "PadInstrument.ts (movable pad instrument: layout, colliders, SIK Interactable per pad, hit=audio+pulse, per-panel pan-link toggle)", "PulseOrb.ts (reactive orb: hit pulses tinted per instrument, demo-beat breathing, idle spin)", "PlaylistPanel.ts (demo transport play/stop + session take bar with 16 hit ticks, SIMULATED labels baked in, editor-only test-keys caption)", "DawManager.ts (session clock, demo autostart at ~0.1s, editor-only keyboard test controls on the SAME hitPad code path)"],
+      "compileEvidence": "runIsolatedCompilation (Editor API, same lensifyts binary the editor uses) over Assets/Scripts + project's real Support/StudioLib.d.ts + Support/editor.d.ts + SIK sources: 0 errors in all five project scripts (SIK's own package sources show errors only due to the makeshift isolated tsconfig missing SIK ambient declarations; they compile inside LS)",
+      "honestyControls": "test keys labelled 'TEST KEYS (editor only)' on the panel and hidden on device via global.scene.getCameraType()==='runtime'; take row permanently labelled 'SIMULATED, session only (not saved)'; no voice features shipped (headless-only service reality) and nothing simulated to look real"
+    },
+    "scene": {
+      "method": "VirtualScene apply (265 ops, 0 errors) + scene_graphql preset creates (11 EmptyPreset objects renamed to script contract + TextComponentPreset each), AudioListenerComponent added to Camera Object, saved via project.save()",
+      "hierarchy": "SoundcraftRoot { PulseOrb(OrbCore sphere 7cm + OrbHalo disc), BeatPanel(BackPlate + Pad0..Pad3 + PanToggle + UiAudio + TxtTitle/TxtSub), BassPanel(...), ChordPanel(...), PlaylistPanel(BackPlate + DemoPad + ClearPad + BarBG/BarFill + Tick0..Tick15 + UiAudio + 5 texts), DawManager } — 79 objects total",
+      "wiring": "12 pad AudioComponents + 1 demo-loop AudioComponent (demo_vapor.wav on DemoPad) + 4 ui_toggle AudioComponents wired to @asset:GeneratedSFX/*.wav via VirtualScene; ScriptComponents carry scriptAsset (PulseOrb.ts / PadInstrument.ts x3 / PlaylistPanel.ts / DawManager.ts) — verified resolved via Editor API (assetName 'PadInstrument'); instrumentType @inputs intentionally NOT wired (compile-gated) — PadInstrument self-derives type from scene object name as fallback so layouts are correct regardless",
+      "layout": "arm's-reach placement per plan-lens AR rules: panels at z=-52..-66 cm, orb center (0,-2,-62), beat panel left, bass right, chords below, playlist above; all panels draggable via SIK InteractableManipulation (mouse-driven in Preview, pinch on device)"
+    },
+    "designMapping": {
+      "playFirst": "demo loop auto-plays ~0.1s after start (LowPower, loops)",
+      "instruments": "3 room-fixed floating instruments in arm's reach: Beat Pads (2x2), Bass Strip (vertical 4), Chord Cloud (arc 4)",
+      "hands": "pinch/press per SIK Interactable (MouseInteractor drives the same events in Preview; no hand-speed fakery)",
+      "visualPulsation": "pad flash+scale spring, orb pulse tinted by instrument, orb breathes at demo BPM, halo burst",
+      "takeGrowsOnPlaylist": "session take bar + hit ticks grow while you play — explicitly SIMULATED/session-only, clear pad resets",
+      "movablePanels": "grab any panel backing plate to move it",
+      "panLinkedToPosition": "per-panel spatial audio (spatialAudio.enabled + positionEffect + distanceEffect on the pad AudioComponents); side PanToggle disables the link (fixed stereo center); P key toggles all in editor tests",
+      "demoVaporwave": "VAPOR SUNSET bundled loop, plays on start, pinchable play/stop pad"
+    }
+  },
+  "blocker": {
+    "summary": "Lens Studio 5.23.2 project-scope TypeScript compilation never runs in this environment, so scripts do not execute in Preview ('Preview not ready ... TypeScript is not compiled'). Not a code problem: the five project scripts compile with 0 errors.",
+    "preciseFindings": [
+      "RecompileTypeScriptTool and ITypeScriptCompilationApi.refreshProjectCompilation both hang indefinitely (no lensifyts process ever launched, no log output) whenever the loaded project actually contains TypeScriptAssets; they return 'TypeScript compiler is not configured (no TypeScript files in project)' instantly whenever it does not",
+      "tsc-only pipeline itself is healthy: runIsolatedCompilation compiles arbitrary sources (used to verify our code), and the editor's own __execute__.ts staging compiles with real diagnostics",
+      "the failure mode is instance-state-dependent, not config-dependent: reproduced across 4 app relaunches, with Assets/tsconfig.json + root tsconfig.json corrected to the official documented shape (TS5-native decorators — the project's Decorators.d.ts declares ClassDecoratorContext signatures, so experimentalDecorators must stay OFF), stale project locks removed, scripts wired into ScriptComponents, sign-in ok, Spectacles target",
+      "physical display is LOCKED (screencapture returns a fully black frame) and osascript keystrokes are not permitted (System Events error 1002) — matches the prior session receipt's headless-environment suspicion; the compile manager's preparation phase appears to require UI/screen session context that never completes here",
+      "one launch landed on a temp Default project instead of the target (open -a race) — that instance legitimately reported 'no TypeScript files in project'; MCP openProject then loaded the real project correctly (30.76s, 1199 files, 540 TypeScriptAsset imports)"
+    ],
+    "whyStopping": "per instruction: physical display unlock / interactive diagnostics need the user; no further blind restarts"
+  },
+  "evidenceVsLimitations": {
+    "verified": ["audio files on disk + imported by Lens Studio (metas generated; 540 TypeScriptAssetImporter + WAV import events in app log)", "acoustic gate numbers for all 14 WAVs", "scene state on disk via .virtual-scene.json (79 objects, correct counts per key)", "scriptAsset wiring resolved (Editor API readback)", "project scripts typecheck clean (0 errors) via the editor's isolated compilation API", "project saved (saved:true) with scene + wiring + assets", "gate: MCP reachable, correct project loaded, Spectacles target, isAuthorized true"],
+    "notVerifiedAndNotClaimed": ["NO runtime audio playback heard or measured (audible check needs a human with the preview; playback state could not be polled because runtime queries need compiled scripts)", "NO runtime screenshots of the working Lens (Scene editor render only; runtime blocked by compile gate)", "NO simulated pinch tests executed (PreviewInteractTool needs running scripts; also AiPreviewAgent packages were deliberately NOT installed mid-build to avoid disturbing the scene — recommended before first runtime test)", "pan/spatial behavior unverified at runtime (spatialAudio calls are in code, types verified)", "take capture is session-only by design; nothing persists"]
+  },
+  "howToTestWithoutCLI": [
+    "1. Unlock the physical display and bring Lens Studio to the foreground",
+    "2. If Preview still says 'not ready': Window > Utilities > TypeScript Status — press the compile/refresh action there; or simply click a .ts file in Assets/Scripts (opening a script triggers compilation), then refresh Preview",
+    "3. Preview (SPECS 27, Interactive): mouse-click pads = pinch. Keys 1-4 beat, QWER bass, ASDF chords, SPACE demo, P pan-link (caption is editor-only)",
+    "4. Drag panels by their backing plates; toggle the side pads to unlink panning; watch the orb pulse and the take bar grow (labelled SIMULATED — session only)",
+    "5. Optional automated hand tests: install the AiPreviewAgentInteract package, add AgentInspectScript + AgentInteractScript to a SceneObject, then the Preview Interact chat tools can pinch pads programmatically"
+  ],
+  "revert": ["scene: delete SoundcraftRoot (+ AudioListenerComponent on Camera Object) via Scene hierarchy; assets under Assets/{GeneratedSFX,Meshes,Materials,Scripts} + Assets/tsconfig.json are additive files", "tsconfig edits: Assets/tsconfig.json is new (delete); root tsconfig.json changed from the LS-generated original (restore from lens-studio/Orbit.esproj sibling tsconfig.json if wanted)", "no git commits, no remotes, no publishing; all files untracked", "app: quit/relaunch as usual; MCP server + keychain token untouched"],
+  "secrets": "No tokens printed or stored; LS-managed config files (.mcp.json/.codex/config.toml/.cursor/mcp.json/.vscode/mcp.json) remain gitignored in lens-studio-specs/.gitignore (Lens Studio managed block, verified with git check-ignore)"
+}

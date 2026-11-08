@@ -1,0 +1,61 @@
+- !<AssetImportMetadata/3f4fd408-9b0c-431c-a8f9-2f5ada984110>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 28214739-8f53-4b4d-bf51-03882b9ad232
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 28214739-8f53-4b4d-bf51-03882b9ad232
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 73d08347-c857-4bd1-8ded-f58b0d57e5dc
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/73d08347-c857-4bd1-8ded-f58b0d57e5dc>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 4966401f-4d6e-4046-b6a5-81d1665d9ded
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    captureRoot: false
+    captureTrack: false
+    companionBaseUrl: false
+    internetModule: false
+    judgeLocalOnlyMode: false
+    statusText: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - internetModule: !<reference.InternetModule> 00000000-0000-0000-0000-000000000000
+      companionBaseUrl: ""
+      captureTrack: Lens
+      judgeLocalOnlyMode: false
+      statusText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      captureRoot: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input Asset.InternetModule internetModule {"label":"Internet Module", "hint":"The Lens asset providing fetch. Required unless Judge Local-Only Mode is on."}'
+    - "// @input string companionBaseUrl {\"label\":\"Companion Base URL\", \"hint\":\"HTTPS endpoint of the companion, e.g. https://<machine>.tail….ts.net — set via Inspector, never hardcoded. The host must be in the project's allowed domains.\"}"
+    - '// @input string captureTrack = "Lens" {"label":"Capture Track", "hint":"Typed track id or name for live_open (e.g. an existing MIDI track name). No filesystem paths anywhere — the API has none."}'
+    - '// @input bool judgeLocalOnlyMode {"label":"Judge Local-Only Mode", "hint":"Clearly-labelled LOCAL-ONLY judging: local capture + local monitor, zero network use, no backend claims."}'
+    - '// @input Component.Text statusText {"label":"Status Text (optional)", "hint":"Optional Text that mirrors the connection phase, queue state, and saved badge."}'
+    - '// @input SceneObject captureRoot {"label":"Capture Root (optional)", "hint":"Subtree scanned for instrument panels (BeatPanel/BassPanel/ChordPanel with Pad0..N children). Defaults to the whole scene."}'

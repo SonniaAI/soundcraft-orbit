@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-04",
+  "scope": "CLAD plugin runtime + Lens Studio MCP verification (no scene edits, no secrets recorded)",
+  "project": {
+    "esproj": "lens-studio/Orbit.esproj",
+    "lensStudio": "5.23.2 (build 26081320), PID live, MCP server listening on 127.0.0.1:50040",
+    "template": {
+      "fromTemplateName": "Default",
+      "targetPlatform": "Snapchat",
+      "verdict": "Snapchat default template, NOT SPECS Base Template (confirmed from Orbit.esproj manifest)"
+    }
+  },
+  "officialSources": {
+    "pluginMarketplace": "https://github.com/lens-studio-devs/ls-extensions (Specs Inc. - Lens Studio Team, Apache-2.0)",
+    "plugin": "ls-clad@ls-extensions v1.0.0",
+    "verifiedCommit": "8adedd5d5b93f9dbe55f31c6be4264a4f8a608b3 (2026-09-01, main HEAD at verification time)",
+    "docs": [
+      "https://developers.specs.com/docs/clad/setup/setup-ai/claude-code-setup",
+      "https://developers.specs.com/docs/clad/setup/setup-ai/codex-setup",
+      "https://developers.specs.com/docs/clad/additional-guides/setup-specs-project"
+    ]
+  },
+  "skillCopiesAudit": {
+    "opencodeSkills": ".opencode/skills/ (56 skills) byte-identical to official ls-clad plugin skills at commit 8adedd5 (diff -rq clean)",
+    "planLens": ".agents/skills/plan-lens content identical to challengepost/learn-specs @ 5d8bc0800346d38e468c29b15afcb7ca92280005 (SKILL.md sha256 1907f265...dbbd)",
+    "lockHashMismatch": "skills-lock.json computedHash ff873351... does not equal plain sha256 of SKILL.md (1907f265...); installer-specific hash scheme, content itself verified genuine",
+    "missingHalf": "local .opencode/skills contains ONLY skills; the plugin's agents/ (specs-experience-builder, script-author, etc.) were never copied locally"
+  },
+  "verifiedRuntime": {
+    "codex": {
+      "version": "codex-cli 0.166.0",
+      "mcp": "VERIFIED - headless codex exec from lens-studio/ sees mcp__lens_studio.* tools (CapturePanelScreenshotTool, CaptureRuntimeViewTool, ConvertSvgToTexture observed)",
+      "plugin": "VERIFIED INSTALLED AND VISIBLE - ls-clad@ls-extensions installed, enabled; in-session probe listed skills lens-studio-router, lens-api, scene-construction",
+      "integrity": "installed cache ~/.codex/plugins/cache/ls-extensions/ls-clad/local is byte-identical to official repo @ 8adedd5",
+      "prerequisiteAdded": "trust entry for the lens-studio project dir appended to ~/.codex/config.toml [projects] (this is the headless equivalent of Codex's 'trust this folder' prompt; project .codex/config.toml is trust-gated and was silently ignored before)"
+    },
+    "claudeCode": {
+      "version": "2.0.26",
+      "mcp": "VERIFIED - claude mcp list health check: lens-studio http://localhost:50040/mcp - Connected (transient local-scope entry, removed after test; ~/.claude.json left clean)",
+      "plugin": "NOT installed (~/.claude/plugins empty); ready to install with: claude plugin marketplace add lens-studio-devs/ls-extensions && claude plugin install ls-clad@ls-extensions",
+      "blocker": "LLM API auth: configured endpoint (user ~/.claude/settings.json env) returns 401 on headless claude -p -> Claude Code cannot run any model turn until re-auth; MCP layer itself is healthy"
+    }
+  },
+  "howToRunGenuineCLADWithoutUserTerminal": {
+    "codexHeadless": "cd lens-studio && codex exec --sandbox read-only -m gpt-6.1-terra '<prompt>'; project .codex/config.toml now auto-loads (trusted); per router cross-runtime rules Codex executes agent markdown inline (it never spawns md subagents)",
+    "codexInteractive": "cd lens-studio && codex, then /mcp shows lens-studio, /plugins shows ls-clad",
+    "claudeCodeOnceAuthFixed": "cd lens-studio && claude (trust folder, approve lens-studio MCP), then /plugin marketplace add lens-studio-devs/ls-extensions and /plugin install ls-clad@ls-extensions; headless alternative: claude -p --mcp-config .mcp.json --strict-mcp-config --allowedTools 'mcp__lens-studio__*'",
+    "httpRule": "no raw HTTP was used against Lens Studio at any point; all contact went through the supported clients' MCP stacks"
+  },
+  "revert": [
+    "codex plugin remove ls-clad@ls-extensions",
+    "codex plugin marketplace remove ls-extensions",
+    "delete [projects.\"<lens-studio dir>\"] block from ~/.codex/config.toml (backup: /tmp/codex_config_backup_1793815506.toml)"
+  ],
+  "blockers": [
+    "BLOCKER 1 (project): Orbit.esproj is Snapchat/Default template, not SPECS Base Template; official conversion guide exists but conversion touches the scene - deferred by instruction",
+    "BLOCKER 2 (Claude Code): 401 from configured API endpoint; user must re-authenticate Claude Code before the Claude runtime path works (plugin also still uninstalled there)",
+    "BLOCKER 3 (cosmetic): skills-lock.json hash scheme mismatch (content verified genuine)"
+  ],
+  "secrets": "Lens Studio local Bearer token intentionally never printed, logged, or written here; it stays only in the gitignored Lens Studio managed config files (lens-studio/.mcp.json, .cursor/mcp.json, .vscode/mcp.json, .codex/config.toml - all confirmed untracked)"
+}

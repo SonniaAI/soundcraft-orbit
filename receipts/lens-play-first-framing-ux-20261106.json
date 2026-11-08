@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-06",
+  "scope": "Play-first demo UX pass on SoundcraftOrbit.esproj via native Lens Studio MCP only (VirtualScene + preview tools); no backend, no Rust, no k8s, no new assets",
+  "rootCausesFound": [
+    "Docked Preview 1 renders a 1392x3707 portrait SPECS 27 device view (Interactive 'Evening Outdoor'); horizontal half-FOV is ~+/-15.3cm at 66cm depth. Authored layout had BeatPanel/BassPanel at x=+/-27 (fully outside), ConnectionPanel at x=36 (fully outside, so the offline/unsynced status was invisible), chord panel bottom-cropped, and the playlist slightly edge-cropped.",
+    "Preview camera pose had drifted to (-27,0,0), which alone cropped the playlist and hid everything else; reset to origin (0,0,0) via MovePreviewCamera (preview state only, no scene change).",
+    "Playlist-internal overlaps: DemoPad/ClearPad covered the start of the demo/take/sim text rows, and the take line sat under the session bar row.",
+    "PadInstrument.ts re-asserts pad and PanToggle local positions at runtime from its own layout constants, so fixes must be panel-root transform-only (scale+position); no child-level moves for instrument panels.",
+    "A concurrent writer (capture-agent stream) was editing Assets/Scripts/SoundcraftCompanionClient.ts at 09:00:01 and 09:00:50; each write auto-recompiled (succeeded) and reset the lens. Gesture verification was redone after the writer settled."
+  ],
+  "changesApplied": {
+    "method": "VirtualScene apply (10 ops, 0 errors), atomic; scene saved via ExecuteEditorCode pluginSystem.findInterface(Editor.Model.IModel).project.save() -> saved=true; Assets/Scene.scene + SoundcraftOrbit.esproj rewritten on disk",
+    "baselineBackup": "../soundcraft-orbit-scene-baseline-20261106.json (186 objects, pre-change serialization)",
+    "sceneTransforms": {
+      "ConnectionPanel": "[36,16,-66] -> [0,30,-70] (pairing UI + red OFFLINE compact line now inside the portrait FOV; collapsed state fully visible; expanded ~1cm top crop only; no coplanar overlap with playlist)",
+      "PlaylistPanel": "scale 1 -> 0.85 (plate +/-17cm -> +/-14.45cm fits +/-15.3cm half-FOV; text 48 -> 40.8 effective, still above Body-39 type scale)",
+      "PlaylistPanel/TxtDemo,TxtTake,TxtSim": "local x -4 -> 2.5; TxtTake y 0.4 -> -0.8 (clear of Demo/ClearPads and the bar/tick row; no script owns these positions)",
+      "BeatPanel": "[-27,-13,-52] -> [-5,-17,-60] (2x2 pads fully in frame, toggle at +6.6 in frame)",
+      "ChordPanel": "[0,-30,-56] -> [0,-32,-66], scale 0.66 (plate +/-12.54, pads 5.28cm, PanToggle at 14.12 inside half-FOV; runtime layout constants scale uniformly)",
+      "BassPanel": "[27,-12,-52] -> [10,-14,-72], scale 0.62 (column fits right side; all 4 pads + PanToggle visible; clear of orb, beat, chord, playlist)"
+    },
+    "notTouched": [
+      "SoundcraftCompanionClient/Types/Http/Controller/PadInstrument (owned by capture agent)",
+      "All TypeScript sources (no code edits this pass)",
+      "Audio assets (original WAVs only, none regenerated)",
+      "StatusSink, CaptureController wiring, SoundcraftBus logic"
+    ]
+  },
+  "verification": {
+    "compile": "RecompileTypeScriptTool -> succeeded (x3 across the pass, all after layout change)",
+    "logs": "RunAndCollectLogsTool refresh windows: zero lens errors; startup shows SIK 0.18.0, all interactables registered incl ConnectionPanel, controller.statusText/onSnapshot wired, 'discovered 12 pads on 3 instrument panel(s)', demo 'VAPOR SUNSET' rolling. Only recurring warning is editor-side QNetworkAccessManager 'Host requires authentication' (pre-existing in baseline, not a lens error).",
+    "gesture": "PreviewInteractTool real SIK pinch on BeatPanel/Pad0 (uniqueId -434028514184248428:-5777434602111739165) -> CommandSuccess; take readback went '0 hits' -> '1 hits' on the live TxtTake Text, twice (once per fresh lens instance); take label remains 'SIMULATED, session only (not saved)'",
+    "screenshots": "CapturePanelScreenshotTool (Preview 1 dock, before/after) + CaptureRuntimeViewTool front/isolated-object views; post-fix view shows playlist fully inside frame with readable title/demo/take/SIMULATED/TEST-KEYS rows, orb centered, beat 2x2, bass column, chord row all visible; ConnectionPanel isolated view shows header, red 'OFFLINE · unsent 0 · WINDOW UNKNOWN' compact line, PHASE: OFFLINE detail, one-time-code field, PAIR button, hygiene footer",
+    "honesty": "No false SAVED anywhere: SAVED badge only from receipt-backed savedBadgeCount in SoundcraftConnectionStatus.ts (untouched); offline state visibly identified by the red compact line; take bar explicitly labelled simulated/session-only"
+  },
+  "notEstablished": [
+    "No backend round trip (backend image/repair owned by other agents; lens correctly shows OFFLINE)",
+    "No on-device (Spectacles hardware) verification - laptop preview only",
+    "Portrait-dock cropping is inherent to the narrow docked preview window shape; users can widen the dock for a wider view"
+  ]
+}

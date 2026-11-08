@@ -1,0 +1,19 @@
+{
+  "name": "lens-client-tests",
+  "version": "1.0.0",
+  "description": "Offline reproducibility tests for the Soundcraft companion Lens client (compiles the actual project sources; no Lens Studio, no SoundCraft, no backend needed)",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.json && node dist/tools/lens-client-tests/tests/run.js",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "typescript": "5.5.4"
+  }
+}

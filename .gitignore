@@ -4,3 +4,47 @@ shots/
 nohup.out
 *.log
 .DS_Store
+
+# Local agent/tool installations and preserved authoring backups.
+/.agents/
+/.claude/
+/.opencode/
+/agent/
+/lens-studio/
+/backup-pre-package-swap-20261104/
+/staging-packages/
+
+# Lens Studio's machine-local MCP credentials must never enter the public repo.
+**/.mcp.json
+**/.cursor/mcp.json
+**/.vscode/mcp.json
+**/.codex/config.toml
+**/.claude/settings.local.json
+**/.opencode/opencode.json
+**/.opencode/opencode.jsonc
+**/spk_debug_key.pem
+
+# Private backend checkout and machine-local Lens authoring state.
+/soundcraft-review/
+/soundcraft-stage-fix/
+/soundcraft-orbit-scene-baseline-*.json
+**/.virtual-scene.json
+**/tempAssetGen/
+/lens-studio-specs/Plugins/
+/lens-studio-specs/.layout-tooling/
+/lens-studio-specs/leaf_plugin_settings.json
+
+# Private infrastructure qualification records and local visual diagnostics.
+/receipts/soundcraft-staging-canary-*.json
+/preview_shot_*.jpg
+/preview_closeup.jpg
+/panel_*.png
+/after_*.jpg
+/attend_*.jpg
+/before_layout.jpg
+/final_*.jpg
+/qa[0-9]*.jpg
+/closeup_overview.png
+/playlist_look.jpg
+/preview_overview.png
+/chord_title_zoom.jpg
