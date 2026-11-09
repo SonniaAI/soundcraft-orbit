@@ -27,6 +27,7 @@ nohup.out
 # Private backend checkout and machine-local Lens authoring state.
 /soundcraft-review/
 /soundcraft-stage-fix/
+/soundcraft-integration-20261108/
 /soundcraft-orbit-scene-baseline-*.json
 **/.virtual-scene.json
 **/tempAssetGen/
@@ -44,6 +45,7 @@ nohup.out
 /before_layout.jpg
 /final_*.jpg
 /qa[0-9]*.jpg
+/kb_*.jpg
 /closeup_overview.png
 /playlist_look.jpg
 /preview_overview.png

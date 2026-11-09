@@ -67,6 +67,9 @@ import {
   saveAckSnippet,
   severityForSummary,
 } from "./SoundcraftConnectionStatus";
+import {SoundcraftBus} from "./SoundcraftBus";
+import {SoundcraftPreviewKeyboard} from "./SoundcraftPreviewKeyboard";
+import {Interactable} from "SpectaclesInteractionKit.lspkg/Components/Interaction/Interactable/Interactable";
 import {Button} from "SpectaclesUIKit.lspkg/Scripts/Components/Button/Button";
 import {FlexItem} from "SpectaclesUIKit.lspkg/Scripts/Components/Layout2D/Flex/FlexItem";
 import {FlexLayout} from "SpectaclesUIKit.lspkg/Scripts/Components/Layout2D/Flex/FlexLayout";
@@ -155,6 +158,10 @@ const OPEN_ROW_MIN_H = 3.6 // secondary operator action (still hand-friendly)
 const STATUS_ROW_MIN_H = 6.0 // ~4 wrapped Caption lines + slack
 // Reopen confirmation timings live in SoundcraftOpenConfirm.ts (pure helper:
 // 8 s arm window + 300 ms minimum separation; duplicates never advance).
+// Preview on-screen keyboard: replaces the workflow rows while a field is
+// being edited (the AR keyboard does not appear in the SPECS 27 preview).
+const KEYBOARD_ROW_H = 12.0
+const EDITING_INNER_H = 28.6 // header + compact + inputs + hint + keyboard + gaps + padding
 
 @component
 export class SoundcraftConnectionUI extends BaseScriptComponent {
@@ -286,6 +293,16 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
   judgeNoteText: string = "JUDGE LOCAL-ONLY MODE — local capture only; no backend actions offered"
 
   @input
+  @label("Editing Hint")
+  @hint("Shown while the on-screen keyboard is open (preview only).")
+  editingHint: string = "on-screen keyboard — tap DONE when finished"
+
+  @input
+  @label("Empty Endpoint Hint")
+  @hint("Shown when the pad opens on an EMPTY endpoint field: the scheme button comes first, then the host.")
+  endpointEmptyHint: string = "endpoint empty — tap https:// first, then type the host"
+
+  @input
   @label("Footer Note")
   @hint("Static hygiene note under the pair row.")
   footerNote: string = "code: used once · cleared after use · never stored or logged"
@@ -339,6 +356,27 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
   private expandedRows: SceneObject[] = []
   private expandedItems: FlexItem[] = []
   private judgeMode = false // authored controller.judgeLocalOnlyMode — workflow affordances withheld
+  // Preview on-screen keyboard state (this.keyboardRow hosts the pad; the
+  // workflow rows swap out for it while a field is being edited).
+  private kb: SoundcraftPreviewKeyboard = null
+  private keyboardRow: SceneObject = null
+  private keyboardItem: FlexItem = null
+  private editingField: "endpoint" | "code" | null = null
+  private editHideRows: SceneObject[] = []
+  private editHideItems: FlexItem[] = []
+  // Preview-only deferred NATIVE exit: the UIKit field invokes onEditMode(true)
+  // BEFORE isEditing=true/requestKeyboard (BaseTextInputComponent.editMode),
+  // so a synchronous editMode(false) inside the event is an SDK line-611
+  // no-op. The dismiss is scheduled for the NEXT frame via ONE reusable
+  // DelayedCallbackEvent; a stale firing no-ops on the consumed pointer.
+  private kbExitDelayed: DelayedCallbackEvent = null
+  private kbExitPendingField: "endpoint" | "code" | null = null
+  private destroyed = false
+  // Field-tap wiring is DEFERRED: the UIKit TextInputField creates its SIK
+  // Interactable during its own (later) initialization, so at build time the
+  // component does not exist yet. A per-frame retry attaches as soon as it
+  // appears (bounded at ~10 s; both fields succeed on the current boots).
+  private fieldTapPending: { field: "endpoint" | "code"; tf: TextInputField; done: boolean }[] = []
 
   // ---- state -------------------------------------------------------------------
   private built = false
@@ -365,6 +403,14 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
     return Math.max(this.statusLineHeight, STATUS_ROW_MIN_H)
   }
 
+  // ---- editor/device gating -------------------------------------------------------
+  /** The on-screen pad + editing layout are PREVIEW-ONLY: on hardware the
+   * native TextInputField + AR keyboard own entry, and none of the fallback
+   * UI is created (no Bus flag, no row swap, no physical-key listener). */
+  private get isEditorPreview(): boolean {
+    return global.deviceInfoSystem.isEditor()
+  }
+
   // ---- controller wiring state (single-shot, race-safe) -------------------------
   private controllerReady = false // OnStart ran with a live controller @input
   private wired = false // exactly-once guard for the statusText/onSnapshot hookup
@@ -378,13 +424,19 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
     // subtree IS the render order. No renderOrder is set anywhere below.
     this.sceneObject.createComponent("Component.Canvas")
 
+    this.kbExitDelayed = this.createEvent("DelayedCallbackEvent") as DelayedCallbackEvent
+    this.kbExitDelayed.bind(() => this.deferredNativeExit())
+
     const frame = this.sceneObject.createComponent(Frame.getTypeName()) as Frame
     frame.autoShowHide = false
     frame.autoScaleContent = false
     frame.allowScaling = false
     this.frame = frame
 
-    this.createEvent("UpdateEvent").bind(() => this.tickOpenArmExpiry())
+    this.createEvent("UpdateEvent").bind(() => {
+      this.tryAttachFieldTaps()
+      this.tickOpenArmExpiry()
+    })
 
     // Frame initializes in OnStartEvent — innerSize / contentTransform are
     // unsafe before onInitialized fires (gotcha G1/G3). The panel starts
@@ -502,6 +554,13 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
   }
 
   private onWillDestroy() {
+    // P3 stuck-flag cleanup FIRST: plain state writes only — the panel is
+    // being destroyed, so NO native UI/layout calls happen here. A pending
+    // next-frame native-exit becomes a no-op (the guard sees destroyed).
+    this.destroyed = true
+    this.kbExitPendingField = null
+    this.editingField = null
+    SoundcraftBus.textEntryActive = false
     // Lifetime unsubscribe: clear the hooks ONLY if they are still ours (a
     // consumer wired after us by someone else is never nulled). Prevents a
     // dangling applyStatus/note feed into destroyed Text rows and duplicate
@@ -706,6 +765,56 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
       this.makeText(c, this.footerNote, "Caption", innerW, FOOTER_H, SECONDARY_TINT, HorizontalOverflow.Wrap)
     })
 
+    // 8 · PREVIEW-ONLY on-screen keyboard (hidden unless a field is selected).
+    // Created ONLY in the editor preview — on hardware the native
+    // TextInputField + AR keyboard own entry and none of this exists.
+    // While editing it REPLACES the workflow rows (pair/open/status/footer)
+    // instead of growing the panel past the readable FOV budget.
+    if (!this.judgeMode && this.isEditorPreview) {
+      this.keyboardRow = this.flexChild(content, {w: innerW, h: KEYBOARD_ROW_H}, (c) => {
+        this.kb = c.createComponent(SoundcraftPreviewKeyboard.getTypeName()) as SoundcraftPreviewKeyboard
+        this.kb.configure(innerW, this.focalDistanceCm)
+        this.kb.onTextChanged.add((text: string) => {
+          if (this.editingField === "endpoint" && this.endpointField !== null) {
+            this.endpointField.text = text
+          } else if (this.editingField === "code" && this.codeField !== null) {
+            this.codeField.text = text
+          }
+        })
+        this.kb.onDone.add(() => {
+          this.closeKeyboard()
+          this.setHint("entry closed — the fields keep their text")
+        })
+      })
+      this.keyboardItem = this.itemOf(this.keyboardRow)
+      // The pad starts unregistered: flexChild registered it for the build,
+      // so it is removed again immediately (same ownership model as collapse).
+      this.colFlex.removeItems([this.keyboardItem])
+      this.keyboardRow.enabled = false
+      // Field selection opens the pad. PRIMARY: the field component's own
+      // onEditMode signal (exists at build time, fires on tap in preview).
+      // SECONDARY (deferred): the SIK Interactable appears on the field
+      // object lazily, so its trigger is attached per-frame once present.
+      if (this.endpointField !== null) {
+        this.endpointField.onEditMode.add((editing: boolean) => {
+          if (editing) {
+            this.openKeyboardFor("endpoint")
+            this.scheduleNativeExit("endpoint")
+          }
+        })
+        this.fieldTapPending.push({ field: "endpoint", tf: this.endpointField, done: false })
+      }
+      if (this.codeField !== null) {
+        this.codeField.onEditMode.add((editing: boolean) => {
+          if (editing) {
+            this.openKeyboardFor("code")
+            this.scheduleNativeExit("code")
+          }
+        })
+        this.fieldTapPending.push({ field: "code", tf: this.codeField, done: false })
+      }
+    }
+
     // Collapsible rows keep their FlexItems (already registered by flexChild);
     // collapse = removeItems + disable, expand = addItems + enable — the item
     // count change is what triggers FlexLayout re-discovery. No row is ever
@@ -713,7 +822,144 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
     const collapsible = [judgeRow, inputsRow, pairRow, openRow, statusRow, hintRow, footerRow]
     this.expandedRows = collapsible.filter((row) => row !== null && row !== undefined)
     this.expandedItems = this.expandedRows.map((child) => this.itemOf(child))
+    // Rows the EDITING state swaps out for the keyboard (workflow rows only —
+    // header/compact/inputs/hint stay visible while typing).
+    const editHide = [statusRow, pairRow, openRow, footerRow]
+    this.editHideRows = editHide.filter((row) => row !== null && row !== undefined)
+    this.editHideItems = this.editHideRows.map((child) => this.itemOf(child))
     this.built = true
+  }
+
+  /** Field selection (pinch/tap on a TextInputField) opens the pad for that
+   * field. DEFERRED attach: the UIKit field's SIK Interactable does not exist
+   * at build time, so a per-frame retry (bounded ~10 s) attaches the trigger
+   * the moment the component appears. The field keeps its native behavior on
+   * hardware — the pad is an additional preview entry surface. */
+  private tryAttachFieldTaps() {
+    if (this.fieldTapPending.length === 0) {
+      return
+    }
+    let remaining: typeof this.fieldTapPending = []
+    for (const entry of this.fieldTapPending) {
+      if (entry.done || entry.tf === null || entry.tf === undefined) {
+        continue
+      }
+      let inter: Interactable | null = null
+      try {
+        inter = entry.tf.getSceneObject().getComponent(Interactable.getTypeName()) as unknown as Interactable
+      } catch (e) {
+        inter = null
+      }
+      if (inter === null || inter === undefined) {
+        remaining.push(entry)
+        continue
+      }
+      entry.done = true
+      inter.onTriggerEnd.add(() => this.openKeyboardFor(entry.field))
+    }
+    this.fieldTapPending = remaining
+  }
+
+  /** Open the pad for a field: swap the workflow rows out (they reappear on
+   * Done/Pair/collapse) and shrink the frame to the editing stack. Flags the
+   * bus so physical keystrokes stop driving the mini-DAW shortcuts.
+   * DEFENSE-IN-DEPTH: preview-only — this is unreachable on hardware (the
+   * affordances that call it are not created there). */
+  private openKeyboardFor(field: "endpoint" | "code") {
+    if (!this.isEditorPreview || !this.built || this.kb === null || this.keyboardItem === null) {
+      return
+    }
+    if (this.editingField === field) {
+      return // already editing this field (debounce for repeated triggers)
+    }
+    this.closeKeyboard()
+    this.editingField = field
+    const initial = field === "endpoint" ? this.endpointField.text : this.codeField.text
+    this.kb.show(field, typeof initial === "string" ? initial : "")
+    SoundcraftBus.textEntryActive = true
+    this.disarmOpen()
+    this.colFlex.removeItems(this.editHideItems)
+    for (const row of this.editHideRows) {
+      row.enabled = false
+    }
+    this.colFlex.addItems([this.keyboardItem])
+    this.keyboardRow.enabled = true
+    this.frame.innerSize = new vec2(this.panelWidth, EDITING_INNER_H)
+    if (field === "endpoint" && (initial === null || initial === undefined || initial.length === 0)) {
+      // EMPTY-ONLY scheme rule, made visible: the https:// button comes first.
+      this.setHint(this.endpointEmptyHint)
+    } else {
+      this.setHint(this.editingHint)
+    }
+  }
+
+  /** Schedule the PREVIEW-ONLY native edit-mode exit for the NEXT frame.
+   * The UIKit field invokes onEditMode(true) BEFORE isEditing=true and
+   * requestKeyboard (BaseTextInputComponent.editMode), so a synchronous
+   * editMode(false) inside the event is an SDK line-611 early-return no-op.
+   * One reusable DelayedCallbackEvent; overwriting the pending field pointer
+   * on a field change IS the cancellation (a stale firing consumes it and
+   * no-ops). Editor-only: never scheduled on hardware. */
+  private scheduleNativeExit(field: "endpoint" | "code") {
+    if (!this.isEditorPreview) {
+      return
+    }
+    this.kbExitPendingField = field
+    if (this.kbExitDelayed !== null && this.kbExitDelayed !== undefined) {
+      this.kbExitDelayed.reset(0)
+    }
+  }
+
+  /** NEXT-frame native exit: dismisses the invisible native TextInput session
+   * that the field opened under the on-screen pad (untoggle, dismiss
+   * keyboard, deregister the active field, cancel pending keyboard requests
+   * — the SDK's full editMode(false) path). No text reads, no logs. The
+   * field's editModeEvent(false) is ignored by this panel's handler, so the
+   * pad stays open. */
+  private deferredNativeExit() {
+    if (this.destroyed || !this.isEditorPreview) {
+      return
+    }
+    const field = this.kbExitPendingField
+    this.kbExitPendingField = null // consume: a stale firing is a no-op
+    if (field === null) {
+      return
+    }
+    const tf = field === "endpoint" ? this.endpointField : this.codeField
+    if (tf === null || tf === undefined) {
+      return
+    }
+    tf.editMode(false)
+  }
+
+  /** Close the pad and restore the workflow rows (no-op when not editing).
+   * Field text is already live (every keystroke wrote the actual field). */
+  private closeKeyboard() {
+    if (this.editingField === null) {
+      return
+    }
+    this.editingField = null
+    this.kbExitPendingField = null // consumed: no stale native-exit after close
+    if (this.kb !== null) {
+      this.kb.hide()
+    }
+    SoundcraftBus.textEntryActive = false
+    if (this.keyboardItem !== null && this.colFlex !== null) {
+      this.colFlex.removeItems([this.keyboardItem])
+    }
+    if (this.keyboardRow !== null) {
+      this.keyboardRow.enabled = false
+    }
+    if (!this.expanded) {
+      return // collapsed while editing: the workflow rows stay hidden
+    }
+    if (this.colFlex !== null) {
+      this.colFlex.addItems(this.editHideItems)
+    }
+    for (const row of this.editHideRows) {
+      row.enabled = true
+    }
+    this.frame.innerSize = new vec2(this.panelWidth, this.effExpandedHeight)
   }
 
   // ---- collapse / expand ---------------------------------------------------------
@@ -737,8 +983,10 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
       this.userWantsExpanded = expanded
     }
     // Collapse/expand is a workflow-context change: a stale armed reopen
-    // intent never survives it (the armed label is hidden anyway).
+    // intent never survives it (the armed label is hidden anyway), and an
+    // open on-screen keyboard is closed first so the row swap stays consistent.
     this.disarmOpen()
+    this.closeKeyboard()
     if (expanded) {
       this.colFlex.addItems(this.expandedItems)
       // restore an in-flight code stashed by the collapse (memory only — the
@@ -784,8 +1032,11 @@ export class SoundcraftConnectionUI extends BaseScriptComponent {
       return
     }
     // Any pair submit resets the reopen confirmation: the armed intent from a
-    // stale OPEN tap must never survive a workflow context change.
+    // stale OPEN tap must never survive a workflow context change. An open
+    // on-screen keyboard is committed as-is first (its buffer is already
+    // live in the fields) so validation reads the complete text.
     this.disarmOpen()
+    this.closeKeyboard()
     if (this.endpointField === null || this.codeField === null) {
       return
     }

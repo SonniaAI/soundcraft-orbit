@@ -37,7 +37,9 @@
     colorOk: false
     colorWarn: false
     controller: false
+    editingHint: false
     emptyCodeHint: false
+    endpointEmptyHint: false
     endpointPlaceholder: false
     expandedHeight: false
     focalDistanceCm: false
@@ -87,6 +89,8 @@
       openArmedHint: ⚠ second tap opens the last saved project — the live document is REPLACED (data-preserving refusals still apply)
       openExpiredHint: open-confirmation expired — nothing was opened
       judgeNoteText: JUDGE LOCAL-ONLY MODE — local capture only; no backend actions offered
+      editingHint: on-screen keyboard — tap DONE when finished
+      endpointEmptyHint: "endpoint empty — tap https:// first, then type the host"
       footerNote: "one-time code: used once · cleared after use · never stored or logged · no tokens are ever shown"
       colorOk: !<Vec4> {x: 0.450000, y: 0.900000, z: 0.550000, w: 1.000000}
       colorInfo: !<Vec4> {x: 0.450000, y: 0.700000, z: 0.950000, w: 1.000000}
@@ -126,6 +130,8 @@
     - '// @input string openArmedHint = "⚠ second tap opens the last saved project — the live document is REPLACED (data-preserving refusals still apply)" {"label":"Open Armed Hint", "hint":"Shown while the reopen action is armed (first tap of two)."}'
     - '// @input string openExpiredHint = "open-confirmation expired — nothing was opened" {"label":"Open Expired Hint", "hint":"Shown when the armed window lapses without a second tap."}'
     - '// @input string judgeNoteText = "JUDGE LOCAL-ONLY MODE — local capture only; no backend actions offered" {"label":"Judge Mode Note", "hint":"Shown instead of the workflow affordances when controller.judgeLocalOnlyMode is authored on (the controller refuses them by design)."}'
+    - '// @input string editingHint = "on-screen keyboard — tap DONE when finished" {"label":"Editing Hint", "hint":"Shown while the on-screen keyboard is open (preview only)."}'
+    - '// @input string endpointEmptyHint = "endpoint empty — tap https:// first, then type the host" {"label":"Empty Endpoint Hint", "hint":"Shown when the pad opens on an EMPTY endpoint field: the scheme button comes first, then the host."}'
     - '// @input string footerNote = "code: used once · cleared after use · never stored or logged" {"label":"Footer Note", "hint":"Static hygiene note under the pair row."}'
     - '// @ui {"widget":"group_end"}'
     - '// @ui {"widget":"separator"}'

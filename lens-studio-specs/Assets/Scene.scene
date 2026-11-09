@@ -6196,6 +6196,8 @@
     openArmedHint: true
     openExpiredHint: true
     judgeNoteText: true
+    editingHint: true
+    endpointEmptyHint: true
     footerNote: true
     colorOk: true
     colorInfo: true
@@ -6228,6 +6230,8 @@
       openArmedHint: ⚠ second tap opens the last saved project — the live document is REPLACED (data-preserving refusals still apply)
       openExpiredHint: open-confirmation expired — nothing was opened
       judgeNoteText: JUDGE LOCAL-ONLY MODE — local capture only; no backend actions offered
+      editingHint: on-screen keyboard — tap DONE when finished
+      endpointEmptyHint: "endpoint empty — tap https:// first, then type the host"
       footerNote: "one-time code: used once · cleared after use · never stored or logged · no tokens are ever shown"
       colorOk: !<Vec4> {x: 0.450000, y: 0.900000, z: 0.550000, w: 1.000000}
       colorInfo: !<Vec4> {x: 0.450000, y: 0.700000, z: 0.950000, w: 1.000000}

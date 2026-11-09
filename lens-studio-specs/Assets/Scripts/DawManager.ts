@@ -24,7 +24,10 @@ export class DawManager extends BaseScriptComponent {
     // "Play first": the bundled demo loop starts on launch. PlaylistPanel
     // self-registers its audio; we just ask it to roll.
     // (Kept dependency-free: instruments/panels/orb register on the bus.)
-    const isDevice = global.scene.getCameraType() === "runtime";
+    // Editor predicate: DeviceInfoSystem.isEditor() — getCameraType()=="runtime"
+    // is not a reliable editor discriminator across preview configurations.
+    const isEditor = global.deviceInfoSystem.isEditor();
+    const isDevice = !isEditor;
     print(
       "[Soundcraft] mini-DAW starting (" +
         (isDevice ? "device" : "editor preview") +
@@ -53,6 +56,11 @@ export class DawManager extends BaseScriptComponent {
 
   /** Editor-only keyboard mirror of the pinch interactions. */
   private onKey(key: Keys) {
+    // Text entry owns the keyboard while the connection panel's on-screen
+    // pad is up: typed characters must never hit pads / pan-link / demo.
+    if (SoundcraftBus.textEntryActive) {
+      return;
+    }
     const find = (type: string) => {
       for (let i = 0; i < SoundcraftBus.instruments.length; i++) {
         if (SoundcraftBus.instruments[i].instrumentType === type) {

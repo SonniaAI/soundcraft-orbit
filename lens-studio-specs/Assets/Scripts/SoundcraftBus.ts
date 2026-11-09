@@ -61,6 +61,10 @@ export class SoundcraftBus {
   static demoPlaying = false;
   static demoBpm = 70;
   static demoLength = 30.9; // seconds, matches Assets/GeneratedSFX/demo_vapor.wav
+  // True while the connection panel's PREVIEW on-screen keyboard owns typing:
+  // DawManager.onKey early-returns so physical/injected keystrokes never fire
+  // pads, pan-link or demo toggles mid-entry. Set ONLY by the connection UI.
+  static textEntryActive = false;
 
   static instruments: PadInstrumentLike[] = [];
   static playlist: {
